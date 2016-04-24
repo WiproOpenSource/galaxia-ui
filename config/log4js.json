@@ -1,0 +1,14 @@
+{ 
+  "appenders": [  
+    {  
+	  "type": "file",
+	  "filename": "logs/localhost.log",
+	  "maxLogSize": 20480,
+	  "backups": 3
+	}
+  ],
+ 
+ "levels": {
+   "[all]": "DEBUG"	
+ }
+}
