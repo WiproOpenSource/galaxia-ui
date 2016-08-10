@@ -1,0 +1,26 @@
+
+<div ng-controller="Checkcontroller" class="md-padding demo checkboxdemoSelectAll">
+<md-card>
+	<md-card-content>
+      <div>
+        <fieldset class="demo-fieldset">
+          <legend class="demo-legend">Dashboard Customization</legend>
+          <div layout="row" layout-wrap="" flex="">
+          <div flex-xs="" flex="50">
+            <md-checkbox aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
+              <span ng-if="isChecked()">Un-</span>Select All
+            </md-checkbox>
+          </div>
+            <div class="demo-select-all-checkboxes" flex="100" ng-repeat="item in items">
+              <md-checkbox ng-checked="exists(item, selected)" ng-click="toggle(item, selected)">
+               {{ item }}
+              </md-checkbox>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+	  <md-button class="md-raised md-primary" ng-click="savedb()">Save</md-button>
+	 <md-card-content>
+    </md-card>		
+   </div>
+
