@@ -19,6 +19,7 @@ var express = require('express')
    , path = require('path')
    , bodyParser = require('body-parser')
    , cookieParser = require('cookie-parser')
+   , connection = require('express-myconnection')
    , log4js = require('log4js')
    , methodOverride = require('method-override')
    , config = require('config')
@@ -39,11 +40,26 @@ app.use(express.Router());
 require('./routes/index')(app);
 require('./routes/nodes')(app);
 require('./routes/dashboard')(app);
+require('./routes/trial')(app);
+require('./routes/select')(app);
+require('./routes/alert')(app);
+require('./routes/dashboardbuilder')(app);
+require('./routes/entity')(app);
+
 
 log4js.configure('./config/log4js.json',{});
 app.set('logger',log4js);
 var logger = log4js.getLogger("app.js");
 
-http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
-});
+require("myframework").configure(app, function(err,data){
+  if(err)
+    console.log('Error Found');
+  else
+    {
+      console.log(" Callback function is being called ");
+      http.createServer(app).listen(app.get('port'), function(){
+        console.log('Express server listening on port ' + app.get('port'));
+      });
+   }
+})
+   

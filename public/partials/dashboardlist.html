@@ -23,10 +23,10 @@
 	</md-card-title>
   <md-card-content>
   <div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;cursor:pointer;" ng-cloak ng-init="loaddashboards()">
-  <md-card   ng-repeat="(key, value) in dashboards" ng-click="handleaction('view',value)" style="height:190px;width:250px;cursor:pointer;">
+  <md-card   ng-repeat="i in dashboards" ng-click="handleaction('view',i.DASHBOARD_URL)" style="height:190px;width:250px;cursor:pointer;">
         <img ng-src="images/dash.png" class="md-card-image" width:"100px"/>
           <md-card-content>
-            <span>{{key}}</span>
+            <span>{{i.NAME}}</span>
 			<!--<div style="display:inline;float:right;top:0px;"><img src="images/index.png" width="20px"></img></i></div>-->
 			<div style="display:inline;float:right;top:0px;"><i style="color:#B0B0B0;font-size:25px;"class="mdi mdi-cursor-pointer"></i></div>
           </md-card-content>   

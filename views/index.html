@@ -31,10 +31,22 @@
     <script src="https://cdn.jsdelivr.net/angular-material-icons/0.6.0/angular-material-icons.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js"></script>
     <script src="http://ngmaterial.assets.s3.amazonaws.com/svg-assets-cache.js"></script>
-    <script src="https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-templates.js"></script>
-    <script src="https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table.js"></script>
+    <script src="../bower_components/mdDataTable-master/dist/md-data-table-templates.js"></script>
+	
+	<!--<script src="../bower_components/angular-chart.js-master/dist/angular-chart.min.js"></script>
+	<script src="../bower_components/angular-chart.js-master/dist/angular-chart.js"></script>-->
+	
+    <script src="../bower_components/mdDataTable-master/dist/md-data-table.js"></script>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/angular.chartjs/latest/angular-chart.min.js"></script>-->
+	<!--<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>-->
+	<script src="../js/Chart.js"></script>
+	<script src="../js/angular-chart.js"></script>
     <script src="../js/controllers.js"></script>
     <script src="../js/app.js"></script>
+	<!--<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="chartjs/Chart.js"></script>-->
+    
 
     <script type="text/javascript">
       angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
@@ -45,6 +57,8 @@
     <link rel="stylesheet" href="../bower_components/mdDataTable-master/dist/md-data-table-style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="https://cdn.materialdesignicons.com/1.4.57/css/materialdesignicons.min.css">
+	
+
   </head>
   <body>
     <div id="container_search_results" align="center">
@@ -56,11 +70,12 @@
             </md-toolbar-filler>
             <div>
               <!--<h2 class="md-toolbar-tools">Galaxia</h2>-->
-			       <img src="images\galaxia.png" width="150"/>
+			  <img src="images\galaxia.png" width="150"/>
               <md-menu-bar>
                 <md-menu>
-                  <button ng-click="$mdOpenMenu()">
-                    Browse
+                  <!--<button ng-click="$mdOpenMenu()">-->
+                  <button ng-click="customize()">
+                    Customize
                   </button>
                   <md-menu-content>
                     <md-menu-item><md-button id="Container_Node" value="Containers">Containers</md-button></md-menu-item>
@@ -82,7 +97,7 @@
                             </md-menu-content>
                         </md-menu>
                     </md-menu-item><md-menu-divider></md-menu-divider>
-                    <md-menu-item><md-button id="modify" ng-disabled="true">Modify</md-button></md-menu-item><md-menu-divider></md-menu-divider>
+                    <md-menu-item><md-button id="modify">Modify</md-button></md-menu-item><md-menu-divider></md-menu-divider>
                     <md-menu-item><md-button id="delete">Delete</md-button></md-menu-item>
                   </md-menu-content>
                 </md-menu>
@@ -91,8 +106,8 @@
                     Search
                   </button>
                   <md-menu-content>
-                    <md-menu-item><md-button id="Container" ng-disabled="false">Containers</md-button></md-menu-item><md-menu-divider></md-menu-divider>
-                    <md-menu-item><md-button id="VM" ng-disabled="false">Virtual Machines</md-button></md-menu-item>
+                    <md-menu-item><md-button id="Container">Containers</md-button></md-menu-item><md-menu-divider></md-menu-divider>
+                    <md-menu-item><md-button id="VM">Virtual Machines</md-button></md-menu-item>
                   </md-menu-content>
                 </md-menu>
               </md-menu-bar>

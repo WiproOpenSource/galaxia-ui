@@ -1,87 +1,78 @@
-/*
-# Copyright 2016 - Wipro Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
 
 module.exports = function(app) {
+
 	app.get('/getdashboards/', function(req, res, next) {
-		var http = require('http');
-		var config = require('config');
+		res.redirect("/dashboard/templates/");
+	});
 
-		var options = {
-		  hostname: config.dashboard_server_ip,
-		  port: config.dashboard_server_port,
-		  path: '/v1/catalogue?unit_type=dashboard',
-		  method: 'GET',
-		  accept:'application/json'
-		};
+	app.get('/dashboard/metrics/:appname', function(req, res, next) {
+		var metric = app.get('metric');
+		var condition = {name:req.params.appname};
+		var fields = {};
+		condition.where ={};  
+		fields = 
+					{'_id':0};
 
-		http.get(options, function(response){
-			response.setEncoding('utf8');
-			var str="";
-			response.on('data', function (data) {
-				str += data;
-				res.send(str);
-			});
-			
-		}).on("error", function(e){
-			console.log("Got error: " + e.message);
-		});
-	})
+				metric.find(condition,fields,null,function(err,result){ 
+					if(err)
+						console.log("Error is : " +  err);
+					else{
+						var results = [];
+						for(i in result){						
+					    	results.push(result[i]);
+					    }
+						res.send(result);								
+						}
+				});
+	});	
 
-	app.put('/savedashboard/', function(req, res, next) {
-		var http = require('http');
-		var jsonobj = req.body;
-		var config = require('config');
+	app.post('/savedashboard/', function(req, res, next) {
+    	res.redirect(307,'/dashboard/templatecreate/');
+	});
+
+	app.post('/dashboard/createmetrics/', function(req, res, next) {
+		console.log("inside create metrics");
+		var metric = app.get('metric');
+		var attributes = {}
+		attributes = {appname:req.body.widgets, metrics: req.body.metrics}; 
+		console.log("template is "+JSON.stringify(attributes));
 		
-		var options = {
-				hostname: config.dashboard_server_ip,
-				port: config.dashboard_server_port,
-				path: '/v1/gapi',
-				method: 'PUT',
-		  	    headers: {
-				    'Content-Type': 'application/json'
-				}
-		};
-		var req1 = http.request(options, function(res1) {
-			res.send("Saved Successfully");
+		metric.save(attributes,function(err,result){ 
+			if(err){
+			console.log(err+"error");
+				next(err);}
+			else {
+				res.send(result);
+			}
 		});
+	});
 
-		// write data to request body
-		req1.write(JSON.stringify(jsonobj));
-		req1.end();		
-		//
-	})
+	app.post('/updatedashboard/', function(req, res, next) {
+    	res.redirect(307,'/dashboard/templatesave/');
+	});
+
+	app.post('/dashboard/updatemetrics/', function(req, res, next) {
+		console.log("inside update metrics");
+		var metric = app.get('metric');
+		var condition = {};
+		condition = {appname:req.body.widgets};		
+		var attributes = {}
+		attributes = {metrics: req.body.metrics}; 
+		//console.log("template is "+JSON.stringify(attributes));
+		
+		metric.update(condition,attributes,function(err,result){ 
+			if(err){
+				console.log(err+"error");
+				next(err);}
+			else {
+				res.send(result);
+			}
+		});
+	});
 
 	app.delete('/deletedashboard/:dbname', function(req, res, next) {
-		var request = require('request');
+		res.redirect('/dashboard/remove/'+req.params.dbname);
+	});
 
-        var jsonobj = {};
-	    jsonobj.name = req.params.dbname;
-   		var config = require('config');
-		
-		var hostname = config.dashboard_server_ip;
-		var port = config.dashboard_server_port;
-		var options = {
-				url: "http://"+hostname+":"+port+"/v1/gapi",
-				method: 'DELETE',
-		  	    headers: {
-				    'Content-Type': 'application/json'
-				},
-				json:jsonobj	
-		};
-
-		request(options,function(){});
-	})	
+	
 }

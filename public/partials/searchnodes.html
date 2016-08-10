@@ -13,15 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 -->
-<div ng-cloak ng-init="searchNodes()"> 
+<div ng-cloak> 
   <md-card>
       <div layout="column" layout-align="center center" style="padding:40px" ng-cloak>
         <div layout="column" layout-align="center center">
-          <md-input-container>
+         <md-input-container>
             <label>{{actionlabel}} Name</label>
             <input ng-model="dbname">
           </md-input-container>
-          <md-button class="md-accent md-raised md-hue-1" ng-click="search()" id="Search_Nodes" value={{actionlabel}}>Search {{actionlabel}}</md-button>
+		  <md-input-container>
+        <label></label>
+       
+		
+          <md-button class="md-accent md-raised md-hue-1" ng-click="search()" id="{{actionlabel}}" value={{actionlabel}}>Search {{actionlabel}}</md-button>
         </div>
       </div>      
   </md-card>
