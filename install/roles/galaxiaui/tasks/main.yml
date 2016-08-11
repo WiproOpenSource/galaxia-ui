@@ -1,0 +1,8 @@
+- name: Install galaxia-ui
+  raw: >
+    sudo git clone https://github.com/WiproOpenSourcePractice/galaxia-ui.git {{ galaxiaui_root_dir }};
+    cd {{ galaxiaui_root_dir }};
+    npm install
+
+
+
