@@ -1,24 +1,31 @@
----
+Stouts.mongo
+============
+
+[![Build Status](http://img.shields.io/travis/Stouts/Stouts.mongodb.svg?style=flat-square)](https://travis-ci.org/Stouts/Stouts.mongodb)
+[![Galaxy](http://img.shields.io/badge/galaxy-Stouts.mongodb-blue.svg?style=flat-square)](https://galaxy.ansible.com/list#/roles/982)
+
+Ansible role which manage [MongoDB](http://www.mongodb.org/)
+
+* Install and configure the MongoDB;
+* Provide hanlers for restart and reload;
+* Setup MMS authomation agent;
+
+#### Variables
+
+```yaml
 
 mongodb_enabled: yes
-mongodb_install: yes
-mongodb_package: mongodb-org=3.2.6
-#- mongodb-org-server=3.2.6
-#- mongodb-org-shell=3.2.6
-#- mongodb-org-mongos=3.2.6
-#- mongodb-org-tools=3.2.6
+
+mongodb_package: mongodb-org
 
 mongodb_additional_packages:
 - python-selinux
 - python-pymongo
 
 mongodb_user: mongodb
-mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
+mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' == mongodb_package) else 'mongodb' }}"
 
-
-mongo_profilelevel: 1
-mongo_slowms: 20
-mongodb_conf_auth: yes                             # Run with security
+mongodb_conf_auth: no                             # Run with security
 mongodb_conf_bind_ip: 127.0.0.1                   # Comma separated list of ip addresses to listen on
 mongodb_conf_cpu: yes                             # Periodically show cpu and iowait utilization
 mongodb_conf_dbpath: /data/db                     # Directory for datafiles
@@ -36,7 +43,7 @@ mongodb_conf_port: 27017                          # Specify port number
 mongodb_conf_quota: no                            # Limits each database to a certain number of files
 mongodb_conf_quotaFiles: 8                        # Number of quota files
 mongodb_conf_syslog: no                           # Log to system's syslog facility instead of file
-mongodb_conf_smallfiles: no                       # Sets MongoDB to use a smaller default file size
+mongodb_conf_smallfiles: no                       # Sets MongoDB to use a smaller default file size       
 
 # Replica set options:
 mongodb_conf_replSet:                             # Enable replication <setname>[/<optionalseedhostlist>]
@@ -49,7 +56,7 @@ mongodb_shell: {}                                 # Define mongo shell commands 
 
 
 # MMS Agent
-mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_latest_amd64.deb
+mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_1.4.2.783-1_amd64.deb
 mongodb_mms_group_id: ""
 mongodb_mms_api_key: ""
 mongodb_mms_base_url: https://mms.mongodb.com
@@ -63,24 +70,29 @@ mongodb_logrotate_options:
   - dateext
   - rotate 7
   - size 10M
+```
 
-# names and passwords for administrative users
-mongodb_user_admin_name: siteUserAdmin
-mongodb_user_admin_password: passw0rd
+#### Usage
 
-mongodb_root_admin_name: siteRootAdmin
-mongodb_root_admin_password: passw0rd
+Add `Stouts.mongodb` to your roles and set vars in your playbook file.
 
-mongodb_root_backup_name: "backupuser"
-mongodb_root_backup_password: "passw0rd"
+Example:
 
-## net Options
-mongodb_net_bindip: 127.0.0.1                    # Comma separated list of ip addresses to listen on
-mongodb_net_http_enabled: false                  # Enable http interface
-mongodb_net_ipv6: false                          # Enable IPv6 support (disabled by default)
-mongodb_net_maxconns: 65536                      # Max number of simultaneous connections
-mongodb_net_port: 27017       
+```yaml
 
-mongodb_user_update_password: "on_create"        # MongoDB user password update default policy
-mongodb_manage_service: true
+- hosts: all
 
+  roles:
+  - Stouts.mongodb
+
+  vars:
+    mongodb_conf_port: 27400
+```
+
+#### License
+
+Licensed under the MIT License. See the LICENSE file for details.
+
+#### Feedback, bug-reports, requests, ...
+
+Are [welcome](https://github.com/Stouts/Stouts.mongodb/issues)!
