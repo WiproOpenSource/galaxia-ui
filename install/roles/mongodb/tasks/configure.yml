@@ -72,12 +72,12 @@
 
 - name: configure |  Adding mongodb collection with database 
   command: mongo meandb --eval "db.createCollection('widgets')"
-  with_dict: mongodb_shell
+  #with_dict: mongodb_shell
 
 
 - name: configure |  Adding mongodb collection with database
   command: mongo meandb --eval "db.createCollection('selectwidgets')"
-  with_dict: mongodb_shell
+  #with_dict: mongodb_shell
 
 - name: configure | Ensure mongodb is started
   service: name={{ mongodb_daemon_name }} state=started enabled=yes
