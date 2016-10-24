@@ -14,7 +14,7 @@
 # limitations under the License.
 */
 
-var appmodule = angular.module('MyApp', ['ngRoute','ngAnimate','ngMaterial','ngMessages','mdDataTable','material.svgAssetsCache','chart.js']);
+var appmodule = angular.module('MyApp', ['ngRoute','ngAnimate','ngMaterial','ngMessages','mdDataTable','material.svgAssetsCache','ui.bootstrap']);
 appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider', 
 					function($routeProvider, $locationProvider,$mdThemingProvider) {
 						$routeProvider.when('/containers', {
@@ -37,7 +37,7 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 					        controller: 'dashboardcontroller'
 					    }).when('/dblink', {
 					        templateUrl: 'partials/dashboardlink.html',
-					        controller: 'dashboardviewcontroller'
+					        controller: 'myController'
 					    }).when('/', {
 					        templateUrl: 'partials/trial.html',
 							controller:'myController'
@@ -56,6 +56,9 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 						}).when('/check',{
 							templateUrl:'partials/check.html',
 							controller:'Checkcontroller'
+						}).when('/zm',{
+							templateUrl:'partials/zoom.html',
+							controller:'maincontroller'
 						});
 							
 					 
@@ -72,6 +75,10 @@ appmodule.controller('searchcontroller', searchcontroller)
 appmodule.controller('dashboardviewcontroller', dashboardviewcontroller)
 appmodule.controller('Checkcontroller',Checkcontroller)
 appmodule.controller('myController',myController)
+appmodule.controller('DialogController',DialogController)
+appmodule.controller('DialogChartController',DialogChartController)
+//appmodule.controller('DialogDashboardController',DialogDashboardController)
+
 
 /*appmodule.controller('chartctrl',function($scope,$timeout,$http){
 	/*$scope.selectedtiles = [];
@@ -124,19 +131,77 @@ appmodule.filter('toArray', function () {
     }
   };
 });
+
 appmodule.factory('dashboardservices', [function() {
 		var containers = [];
 		var label = null;
 		var value = null;
 		var link = null;
 		var cshort = null;
-		return{
+		var metricLabel = {};
+		var templateselected = null;
+		
+		var dashboardData = {},
+			defaultDashboardData = {
+				"templatename": "",
+				"widgets":[],
+				"metrics":[]
+			};
+		
+
+		function resetDashboardData(){
+			dashboardData = angular.copy(defaultDashboardData);
+		}
+		function getDashboardData(){
+			return dashboardData;
+		}
+		function setDashboardName(dashboardName){
+			dashboardData.templatename = dashboardName;
+		}
+		function setDashboardWidget(widgetNames){
+			dashboardData.widgets = widgetNames;
+		}
+		function addDashboardWidget(widgetName){
+			dashboardData.widgets.push(widgetName);
+		}
+		function removeDashboardWidget(widgetName){
+			if(dashboardData.widgets.indexOf(widgetName) != -1)
+				return dashboardData.widgets.splice( dashboardData.widgets.indexOf(widgetName), 1);
+		}
+		function addMetric(metric){
+			dashboardData.metrics.push(metric);
+		}
+		function removeMetric(metric){
+			var metricPosition = dashboardData.metrics.map(function(m){return m.name;}).indexOf(metric.name);
+			if(metricPosition!==-1)
+				return dashboardData.metrics.splice(metricPosition, 1);
+		}
+		
+		
+		return{	
+				dshbrd: {
+					resetDashboardData: resetDashboardData,
+					getDashboardData: getDashboardData,
+					setDashboardName: setDashboardName,
+					setDashboardWidget: setDashboardWidget,
+					addDashboardWidget: addDashboardWidget,
+					removeDashboardWidget: removeDashboardWidget,
+					addMetric: addMetric,
+					removeMetric: removeMetric
+				},
 				add_containers: function(x) {
 					containers = x;
 				},
 				retrieve_containers: function() {
 					return containers;
 				},
+				getTemplateSelected: function (){
+					return templateselected;
+				},
+				setTemplateSelected: function (dashboardName){
+					templateselected = dashboardName;
+				},
+
 				add_label: function(x) {
 					label = x;
 				},
@@ -160,6 +225,12 @@ appmodule.factory('dashboardservices', [function() {
 				},
 				retrieve_cshort:function(x){
 					return cshort;
+				},
+				add_metricLabel: function(x){
+					metricLabel = x;
+				},
+				retrieve_metricLabel: function(){
+					return metricLabel;
 				}
 		}
 }])
@@ -183,51 +254,12 @@ appmodule.filter('keyboardShortcut', function($window) {
 	      }).join(seperator);
 	    };
 });
-appmodule.directive('hcChart', function () {
-                return {
-                    restrict: 'E',
-                    template: '<div></div>',
-                    scope: {
-                        options: '='
-                    },
-                    link: function (scope, element) {
-                        Highcharts.chart(element[0],scope.options);
-                    }
-                };
-            })
-appmodule.directive('hcPieChart', function () {
-                return {
-                    restrict: 'E',
-                    template: '<div></div>',
-                    scope: {
-                        title: '@',
-                        data: '='
-                    },
-                    link: function (scope, element) {
-                        Highcharts.chart(element[0], {
-                            chart: {
-                                type: 'pie',
-								height:250,
-								width:250
-                            },
-                            title: {
-                                text: scope.title
-                            },
-                            plotOptions: {
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    dataLabels: {
-                                        enabled: true,
-                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                                    }
-                                }
-                            },
-                            series: [{
-                                data: scope.data
-                            }]
-                        });
-                    }
-                };
-            });
-			
+
+appmodule.filter('pagination', function()
+{
+ return function(input, start)
+ {
+	start = +start;
+   return input.slice(start);
+ };
+});			

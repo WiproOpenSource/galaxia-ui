@@ -17,12 +17,13 @@
 {
 	"server":{
 	  "node_server_port":3300,
-	  "dashboard_server_ip":"52.2.195.188",
-	  "dashboard_server_port":443
+	  "dashboard_server_ip":"10.200.208.200",
+	  "dashboard_server_port":8050
 	},
 	"database":{
 	    "name": "galaxiadb",
 	    "uri": "mongodb://localhost:27017/GalaxiaDB",
+		"uri_": "mongodb://localhost:27017/OpenApp",
 	    "options": {
                   "db": { "native_parser": true },
                   "server": { "poolSize": 5 }
@@ -38,10 +39,10 @@
                   "tablename":"dbmaster",
                   "fields":[]
                 },
-                {
+                 {
                   "name":"metric",
                   "tablename":"metric",
-                  "fields":[{ "appname": "string", "metrics": "object"}]
+                  "fields":[{ "templatename":"string","widget": "string", "metrics": "object","unit_type":"string","sub_type":"string"}]
                 },
                 {
                   "name":"entity",
@@ -62,7 +63,22 @@
         					"name":"alert",
         					"tablename":"alert",
         					"fields":[]
-        				}
+        				},
+						{
+							"name":"appbundle",
+							"tablename":"applicationbundle",
+							"fields":[{"projectName":"string","environmentList":"object","deploymentBundleList":"object","developerList":"object"}]
+						},
+						{
+							"name":"blueprint",
+							"tablename":"blueprint",
+							"fields":[]
+						},
+						{
+							"name":"deploymentprofile",
+							"tablename":"deploymentprofile",
+							"fields":[{"environment":"object", "blueprintId": "string", "deploymentType": "string", "domain": "string", "infraResources": "object"}]
+						}
             ]
    	}
 }

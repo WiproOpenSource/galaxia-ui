@@ -6,12 +6,9 @@ module.exports = function(app){
 		console.log("Checkboxdata"+req.body);
 		
 			var selecteditems = {};
-			//var selecteditems = req.body.select;
 			var condition={};
 			condition = {selected: req.params.val};console.log("Condition"+JSON.stringify(condition));
-			//condition = {value: req.params.val};console.log("Condition"+JSON.stringify(condition));
 			var attributes = {};
-//attributes = {value: req.params.val}; console.log("VAL "+JSON.stringify(attributes));
 			attributes = {checkboxLabel: req.body}; console.log("VAL "+JSON.stringify(attributes));
 			selectwidget.update(condition,attributes,function(err,result){ 
 			if(err)
@@ -41,7 +38,7 @@ module.exports = function(app){
 				else{
 					var results = [];
 					for(i in result){						
-				    	results.push(result[i].instance);
+				    	results.push(result[i]);
 				    }
 					res.send(results);	
 						console.log("fdgm"+JSON.stringify(results));
@@ -63,10 +60,9 @@ module.exports = function(app){
 				else{
 					var results = [];
 					for(i in result){						
-				    	results.push(result[i].instance);
+				    	results.push(result[i]);
 				    }
 					res.send(results);	
-						console.log("tiles"+JSON.stringify(results));
 					}
 				});
 	});

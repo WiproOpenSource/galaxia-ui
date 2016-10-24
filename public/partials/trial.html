@@ -1,117 +1,13 @@
-<div ng-cloak class="gridListdemoBasicUsage" ng-app="MyApp">
- 
+<div ng-cloak class="gridListdemoBasicUsage" ng-app="MyApp" >
  <md-grid-list md-cols-xs="1" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="2:2" md-gutter="30px" md-gutter-gt-sm="8px">
-
-
   <md-grid-tile  ng-repeat="tile in selectedtiles" 
                     ng-style="{'background': '#f2f2f2'}"
                     md-colspan-gt-sm="{{tile.column}}"
                     md-rowspan-gt-sm="{{tile.row}}"  >
 					<div layout-fill>
-					  <md-whiteframe class="md-whiteframe-2dp">
-					
-					<p>{{tile.name}}</p>
 					<div  ng-include src="tile.templateUrl">
 					</div>
-					
-				</md-whiteframe>
 					</div>
-  </md-grid-tile>
-  
-  
-  
-    <!--<md-grid-tile class="gray" md-rowspan="1" md-colspan="3" md-colspan-sm="1" md-colspan-xs="1" ng-if="showtile('Running Containers')">
-		
-	 <!--<h2>Containers and Metrics</h2>
-	  <div id="container">Placeholder for chart</div>-->
-	  <!--<md-card>
-	   <hc-chart options="chartOptions">Placeholder for generic chart</hc-chart>
-	   <md-card style="height:100%;width:100%">
-	      <md-card-content>
-			<!--<canvas id="line" class="chart chart-line" chart-data="data"
-				chart-labels="labels" chart-series="series" chart-options="options"
-				chart-dataset-override="datasetOverride" chart-click="onClick">
-			</canvas>
-			<mdt-table  mdt-row="{'data':searchItems,
-                      'table-row-id-key': 'id',
-                      'column-keys': ['Image','Host','Name_short']}" selectable-rows="actionlabel.indexOf('eate') == 2" paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" table-card="{visible: true, title: 'Running VM'}" selected-row-callback="addSelectedContainers(rows)">
-    <mdt-header-row >
-      <mdt-column align-rule="left">Image</mdt-column>
-      <mdt-column align-rule="left">Host</mdt-column>
-      <mdt-column align-rule="left">Name</mdt-column>
-    </mdt-header-row>
-		
-	<!--<mdt-row ng-repeat=" obj in searchItems">
-	<md-cell>obj.container</md-cell>
-	<md-cell>obj.host</md-cell>
-	</mdt-row> 
-	
-  </mdt-table>
-	</md-card-content>
-	    </md-card>
-    </md-grid-tile>
-
-    <md-grid-tile class="green" md-rowspan="2" md-colspan="2" md-colspan-sm="1" md-colspan-xs="1" ng-if="showtile('Dashboards')">
-     <!-- <h2>CPU Utilization</h2>
-	  <div id="container1">Placeholder for chart</div>-->
-	
-	  <!--<hc-pie-chart title="Browser usage" data="pieData">Placeholder for pie chart</hc-pie-chart>
-	  <canvas id="line" class="chart chart-line" chart-data="data"
-			chart-labels="labels" chart-series="series" chart-options="options"
-			chart-dataset-override="datasetOverride" chart-click="onClick">
-	</canvas> 
-	
-    </md-grid-tile>
-
-    <md-grid-tile class="yellow" md-rowspan="1" md-colspan="3" md-colspan-sm="1" md-colspan-xs="1" ng-if="showtile('CPU Utilization')">
-	<md-card style="height:50%;width:60%">
-		<h2>Alerts</h2>
-							<!--<md-list flex>
-								<md-list-item>
-									<p>Container Container Container Container Container</p>
-								</md-list-item>
-							</md-list>
-							<ul style="float:left">
-            					<li class="md-body-2" style="float:left">Container Container Container Container Container</li>
-								<br>
-								<li class="md-body-2" style="float:left">Metrics Metrics Metrics Metrics</li>
-							
-							</ul>
-		</md-card>
-    </md-grid-tile>
-
-    <!--<md-grid-tile class="blue" md-rowspan="2">
-      <md-grid-tile-footer>
-        <h3>#4: (2r x 1c)</h3>
-      </md-grid-tile-footer>
-    </md-grid-tile>
-
-    <md-grid-tile class="red" md-rowspan="1" md-colspan="3" md-colspan-sm="1" md-colspan-xs="1" ng-if="showtile('Memory Utilization')">
-	<!--<md-card>
-       <hc-chart options="chartOptions">Placeholder for generic chart</hc-chart>
-	  </md-card>
-	  <canvas id="line" class="chart chart-line" chart-data="data"
-chart-labels="labels" chart-series="series" chart-options="options"
-chart-dataset-override="datasetOverride" chart-click="onClick">
-</canvas> 
-    </md-grid-tile>
-
-    <md-grid-tile class="green" md-rowspan="2" md-colspan="2" md-colspan-sm="1" md-colspan-xs="1" ng-if="showtile('Running VM')">
-     <md-card style="height:50%;width:70%">
-	  <h2>Feedback</h2>
-							<form>
-								<md-input-container class="md-block">
-									<label>Comments</label>
-									<textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
-								</md-input-container>
-								<md-input-container>
-									<label>Email</label>
-										<input type="email">
-								</md-input-container>
-								<md-button class="md-raised md-primary">Submit</md-button>
-							</form>
-     <!--</md-card>								
-    </md-grid-tile>-->
-
+	</md-grid-tile>
   </md-grid-list>
 </div>

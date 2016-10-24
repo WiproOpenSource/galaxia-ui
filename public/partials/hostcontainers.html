@@ -54,7 +54,9 @@
 			<div>
 			<mdt-table  mdt-row="{'data':searchItems,
                       'table-row-id-key': 'id',
-                      'column-keys': ['Image','Host','Name_short']}" selectable-rows="actionlabel.indexOf('eate') == 2" paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" table-card="{visible: true, title: 'Running Containers'}" selected-row-callback="addSelectedContainers(rows)">
+                      'column-keys': ['Image','Host','Name_short']}" selectable-rows="actionlabel.indexOf('eate') == 2" 
+					  paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" table-card="{visible: true, title: 'Running Containers'}" 
+					  selected-row-callback="selectWidgets(rows)">
     <mdt-header-row >
       <!--<mdt-column align-rule="left">Container</mdt-column>-->
       <mdt-column align-rule="left">Image</mdt-column>
