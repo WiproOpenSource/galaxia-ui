@@ -1,0 +1,13 @@
+- name: install git packages
+  apt: name=git-core update_cache=yes
+
+
+- name: download code from git for galaxia-ui
+  git:
+    repo=https://github.com/deepthis36/galaxia-ui.git
+    dest={{ galaxiaui_root_dir }}
+
+
+- name: running npm install on galaxia-ui-install 
+  npm:
+    path={{ galaxiaui_root_dir }}

@@ -24,16 +24,28 @@
    <td>{{obj.host}}</td>
    </tr>
    </table-->
-    
-    
-    <md-card-content layout="row" layout-align="center" class="layout-align-center-stretch layout-row"> 
-		<div>
-		<div>
+   <!-- <div>
+	<div style="inline-block;float:left;margin-left:37%;margin-top:2%;">
+	
+		<span class="md-body-1" style="color:black;"> Running Containers </span>
+		</div>
+		<div style="inline-block;float:right;margin-right:35%">
 		<md-input-container style="margin:15px;" >
                 <label>Search</label>
                 <input type="text" ng-model="searchItem">
             </md-input-container>
+			$scope.selectedMatrix=[];
 			</div>
+    </div> -->
+    <md-card-content layout="row" layout-align="center" class="layout-align-center-stretch layout-row"> 
+		<div>
+		<div style="margin-left:60%">
+		<md-input-container >
+                <label>Search</label>
+                <input type="text" ng-model="searchItem">
+            </md-input-container>
+		</div>	
+			
 		<div ng-hide="true">
                 {{(searchItems = (containers | filter: searchItem))}}
 				
@@ -42,13 +54,15 @@
 			<div>
 			<mdt-table  mdt-row="{'data':searchItems,
                       'table-row-id-key': 'id',
-                      'column-keys': ['container_short', 'host']}" selectable-rows="actionlabel.indexOf('eate') == 2" paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}">
+                      'column-keys': ['Image','Host','Name_short']}" selectable-rows="actionlabel.indexOf('eate') == 2" 
+					  paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" table-card="{visible: true, title: 'Running Containers'}" 
+					  selected-row-callback="selectWidgets(rows)">
     <mdt-header-row >
-      <mdt-column align-rule="left">container</mdt-column>
-      <mdt-column align-rule="right">host</mdt-column>
-      <mdt-column align-rule="right">Image</mdt-column>
-      <mdt-column align-rule="right">name</mdt-column>
-      <mdt-column align-rule="right">id</mdt-column>
+      <!--<mdt-column align-rule="left">Container</mdt-column>-->
+      <mdt-column align-rule="left">Image</mdt-column>
+      <mdt-column align-rule="left">Host</mdt-column>
+      <mdt-column align-rule="left">Name</mdt-column>
+     <!-- <mdt-column align-rule="right">Id</mdt-column>-->
     </mdt-header-row>
 		
 	<!--<mdt-row ng-repeat=" obj in searchItems">
@@ -71,8 +85,9 @@
           <mdt-cell>obj</mdt-cell>
 		</mdt-row>
       </mdt-table>-->
+	  </div>
     </md-card-content>
   </md-card>
   <md-button class="md-accent md-raised md-hue-1" ng-show="actionlabel.indexOf('eate') == 2" ng-click="configureDashboard()">Customise</md-button>
-</div> 
+
 </div>

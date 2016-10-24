@@ -1,0 +1,8 @@
+---
+- hosts: galaxiainstall
+  gather_facts: yes
+  sudo: true
+  roles:
+    - { role: nodejs,        tags: nodejs }
+    - { role: galaxiaui,     tags: galaxiaui }
+    - { role: mongodb,       tags: mongodb }

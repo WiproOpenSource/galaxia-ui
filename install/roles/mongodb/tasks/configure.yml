@@ -1,0 +1,87 @@
+
+---
+#- name: configure | Configure mongodb
+#  template: src=mongod.conf.j2 dest=/etc/mongod.conf owner=root group=root mode=0644
+#  notify: mongodb restart
+
+- name: configure | Configure log rotation
+  template: src=logrotate.conf.j2 dest=/etc/logrotate.d/mongodb.conf
+  when: mongodb_logrotate
+
+- name: configure | Create mongodb user
+  user: name={{mongodb_user}} group={{mongodb_user}}
+
+- name: configure | Configure database directory
+  file: state=directory path={{ mongodb_conf_dbpath }} owner={{mongodb_user}} group={{mongodb_user}} mode=0755
+
+- name: configure | Configure log directory
+  file: state=directory path={{ mongodb_conf_logpath | dirname }} owner={{mongodb_user}} group={{mongodb_user}} mode=0755
+
+- name: Run mongoshell commands with database 
+  command: mongo {{ item.key }} --eval "{{ item.value|join('\n') }}"
+  with_dict: mongodb_shell
+
+#- name: Configure| wait for 120 ms mongo server to come up
+#  wait_for: host={{mongodb_conf_bind_ip}} port={{mongodb_conf_port}} delay=120 state=drained
+
+- name: create administrative user siteUserAdmin
+  mongodb_user:
+    database: admin
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    update_password: "{{ mongodb_user_update_password }}"
+    roles: "{{ item.roles }}"
+    login_port: "{{ mongodb_net_port }}"
+  with_items:
+    - {
+      name: "{{ mongodb_user_admin_name }}",
+      password: "{{ mongodb_user_admin_password }}",
+      roles: "userAdminAnyDatabase"
+      }
+
+- name: create administrative user siteRootAdmin
+  mongodb_user:
+    database: admin
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    update_password: "{{ mongodb_user_update_password }}"
+    roles: "{{ item.roles }}"
+    login_port: "{{ mongodb_net_port }}"
+  with_items:
+    - {
+      name: "{{ mongodb_root_admin_name }}",
+      password: "{{ mongodb_root_admin_password }}",
+      roles: "root"
+      }
+
+- name: create backup user "backupuser"
+  mongodb_user:
+    database: admin
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    update_password: "{{ mongodb_user_update_password }}"
+    roles: "{{ item.roles }}"
+    login_port: "{{ mongodb_net_port }}"
+  with_items:
+    - {
+      name: "{{ mongodb_root_backup_name }}",
+      password: "{{ mongodb_root_backup_password }}",
+      roles: "backup,clusterMonitor"
+      }
+
+
+- name: configure |  Adding mongodb collection with database 
+  command: mongo meandb --eval "db.createCollection('widgets')"
+  #with_dict: mongodb_shell
+
+
+- name: configure |  Adding mongodb collection with database
+  command: mongo meandb --eval "db.createCollection('selectwidgets')"
+  #with_dict: mongodb_shell
+
+- name: configure | Ensure mongodb is started
+  service: name={{ mongodb_daemon_name }} state=started enabled=yes
+  changed_when: False
+
+- name: configure | create cron job
+  cron: name="mongostatCron" minute="*/2" job="mongostat --authenticationDatabase admin -u siteUserAdmin -p passw0rd --noheaders --all -n 60 >> /var/log/mongodb/mongostat.log"

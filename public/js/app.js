@@ -14,7 +14,7 @@
 # limitations under the License.
 */
 
-var appmodule = angular.module('MyApp', ['ngRoute','ngAnimate','ngMaterial','ngMessages','mdDataTable','material.svgAssetsCache']);
+var appmodule = angular.module('MyApp', ['ngRoute','ngAnimate','ngMaterial','ngMessages','mdDataTable','material.svgAssetsCache','ui.bootstrap']);
 appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider', 
 					function($routeProvider, $locationProvider,$mdThemingProvider) {
 						$routeProvider.when('/containers', {
@@ -29,15 +29,38 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 					    }).when('/searchnodes', {
 					        templateUrl: 'partials/searchnodes.html',
 					        controller: 'searchcontroller'
+					    }).when('/searchcontainer', {
+					        templateUrl: 'partials/searchcontainer.html',
+					        controller: 'searchcontroller'
 					    }).when('/delete', {
 					        templateUrl: 'partials/deletedashboard.html',
 					        controller: 'dashboardcontroller'
 					    }).when('/dblink', {
 					        templateUrl: 'partials/dashboardlink.html',
-					        controller: 'dashboardviewcontroller'
+					        controller: 'myController'
 					    }).when('/', {
-					        templateUrl: 'partials/home.html'
-					    });
+					        templateUrl: 'partials/trial.html',
+							controller:'myController'
+					    }).when('/dash', {
+					        templateUrl: 'partials/dashboard.html',
+							controller: 'myController'
+					    }).when('/trial',{
+							templateUrl:'partials/trial.html',
+							controller:'myController'
+						}).when('/demo',{
+							templateUrl:'partials/demo.html',
+							controller:'myController'
+						}).when('/chart',{
+							templateUrl:'partials/canvas.html',
+							controller:'chartctrl'
+						}).when('/check',{
+							templateUrl:'partials/check.html',
+							controller:'Checkcontroller'
+						}).when('/zm',{
+							templateUrl:'partials/zoom.html',
+							controller:'maincontroller'
+						});
+							
 					 
 					    $mdThemingProvider.theme('default')
 					      .primaryPalette('blue')
@@ -50,19 +73,135 @@ appmodule.controller('menucontroller', menucontroller)
 appmodule.controller('dashboardcontroller', dashboardcontroller)
 appmodule.controller('searchcontroller', searchcontroller)
 appmodule.controller('dashboardviewcontroller', dashboardviewcontroller)
+appmodule.controller('Checkcontroller',Checkcontroller)
+appmodule.controller('myController',myController)
+appmodule.controller('DialogController',DialogController)
+appmodule.controller('DialogChartController',DialogChartController)
+//appmodule.controller('DialogDashboardController',DialogDashboardController)
+
+
+/*appmodule.controller('chartctrl',function($scope,$timeout,$http){
+	/*$scope.selectedtiles = [];
+	$http.get('/getTiles').success(function(data){
+	$scope.selectedtiles = data;
+	});
+	$scope.showtile = function(tile){
+		for( x=0;x<$scope.selectedtiles.length;x++){
+			if($scope.selectedtiles[x] == tile) return true;
+		}
+	}
+	
+	$timeout(function(){
+	$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+  $scope.series = ['Series A', 'Series B'];
+  $scope.data = [
+    [65, 59, 80, 81, 56, 55, 40],
+    [28, 48, 40, 19, 86, 27, 90]
+  ];
+	},1000);
+  $scope.onClick = function (points, evt) {
+    console.log(points, evt);
+  };
+  $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+  $scope.options = {
+    scales: {
+      yAxes: [
+        {
+          id: 'y-axis-1',
+          type: 'linear',
+          display: true,
+          position: 'left'
+        },
+        {
+          id: 'y-axis-2',
+          type: 'linear',
+          display: true,
+          position: 'right'
+        }
+      ]
+    }
+  };
+})*/
+
+
+appmodule.filter('toArray', function () {
+  return function (obj, addKey) {
+    if (!(obj instanceof Object)) {
+      return obj;
+    }
+  };
+});
 
 appmodule.factory('dashboardservices', [function() {
-		var containers = null;
+		var containers = [];
 		var label = null;
 		var value = null;
 		var link = null;
-		return{
+		var cshort = null;
+		var metricLabel = {};
+		var templateselected = null;
+		
+		var dashboardData = {},
+			defaultDashboardData = {
+				"templatename": "",
+				"widgets":[],
+				"metrics":[]
+			};
+		
+
+		function resetDashboardData(){
+			dashboardData = angular.copy(defaultDashboardData);
+		}
+		function getDashboardData(){
+			return dashboardData;
+		}
+		function setDashboardName(dashboardName){
+			dashboardData.templatename = dashboardName;
+		}
+		function setDashboardWidget(widgetNames){
+			dashboardData.widgets = widgetNames;
+		}
+		function addDashboardWidget(widgetName){
+			dashboardData.widgets.push(widgetName);
+		}
+		function removeDashboardWidget(widgetName){
+			if(dashboardData.widgets.indexOf(widgetName) != -1)
+				return dashboardData.widgets.splice( dashboardData.widgets.indexOf(widgetName), 1);
+		}
+		function addMetric(metric){
+			dashboardData.metrics.push(metric);
+		}
+		function removeMetric(metric){
+			var metricPosition = dashboardData.metrics.map(function(m){return m.name;}).indexOf(metric.name);
+			if(metricPosition!==-1)
+				return dashboardData.metrics.splice(metricPosition, 1);
+		}
+		
+		
+		return{	
+				dshbrd: {
+					resetDashboardData: resetDashboardData,
+					getDashboardData: getDashboardData,
+					setDashboardName: setDashboardName,
+					setDashboardWidget: setDashboardWidget,
+					addDashboardWidget: addDashboardWidget,
+					removeDashboardWidget: removeDashboardWidget,
+					addMetric: addMetric,
+					removeMetric: removeMetric
+				},
 				add_containers: function(x) {
 					containers = x;
 				},
 				retrieve_containers: function() {
 					return containers;
 				},
+				getTemplateSelected: function (){
+					return templateselected;
+				},
+				setTemplateSelected: function (dashboardName){
+					templateselected = dashboardName;
+				},
+
 				add_label: function(x) {
 					label = x;
 				},
@@ -80,7 +219,19 @@ appmodule.factory('dashboardservices', [function() {
 				},
 				retrieve_link: function() {
 					return link;
-				}				
+				},
+				add_cshort: function(x)	{
+					cshort = x;
+				},
+				retrieve_cshort:function(x){
+					return cshort;
+				},
+				add_metricLabel: function(x){
+					metricLabel = x;
+				},
+				retrieve_metricLabel: function(){
+					return metricLabel;
+				}
 		}
 }])
 appmodule.filter('keyboardShortcut', function($window) {
@@ -104,5 +255,11 @@ appmodule.filter('keyboardShortcut', function($window) {
 	    };
 });
 
-
-
+appmodule.filter('pagination', function()
+{
+ return function(input, start)
+ {
+	start = +start;
+   return input.slice(start);
+ };
+});			

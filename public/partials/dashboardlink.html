@@ -13,8 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 -->
-<div ng-cloak>
-	<div style="width: 100%; height: 550px;border:0px solid #555; " ng-style="selectedDevice">
-		<iframe width="100%" height="100%" ng-src="{{safeurl}}" style="overflow:hidden"  ></iframe>
-	</div>		
+<div>
+	<div class="dashboard-container">
+		<h2>{{templatename}}</h2>
+		<div class="dashboard"  ng-init="setTemplate()">
+				
+			<div > 
+
+				<div style="display:inline-block;width:500px;"><canvas  id="temp0" width="600" height="300" ></canvas></div>
+				<div style="display:inline-block;float:left;width:500px;"><canvas id="temp1" width="600" height="300" ></canvas></div>
+				<div style="display:inline-block;float:left;width:500px;"><canvas id="temp2" width="600" height="300" ></canvas></div>
+				
+				
+			</div>
+		</div>
+	</div>
 </div>
