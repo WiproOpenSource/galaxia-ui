@@ -1,0 +1,20 @@
+<div ng-cloak ng-controller="maincontroller">
+
+	      
+			<mdt-table  mdt-row="{'data':searchItems,
+                      'table-row-id-key': 'id',
+                      'column-keys': ['Image','Host','Name_short']}" selectable-rows="actionlabel.indexOf('eate') == 2" paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" table-card="{visible: true}" selected-row-callback="addSelectedContainers(rows)">
+			<mdt-header-row >
+				<mdt-column align-rule="left">Image</mdt-column>
+				<mdt-column align-rule="left">Host</mdt-column>
+				<mdt-column align-rule="left">Name</mdt-column>
+			</mdt-header-row>
+		
+	<mdt-row ng-repeat=" obj in searchItems">
+	<md-cell>obj.container</md-cell>
+	<md-cell>obj.host</md-cell>
+	</mdt-row> 
+	
+  </mdt-table>
+	
+</div>

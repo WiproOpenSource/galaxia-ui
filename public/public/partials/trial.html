@@ -1,0 +1,13 @@
+<div ng-cloak class="gridListdemoBasicUsage" ng-app="MyApp" >
+ <md-grid-list md-cols-xs="1" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="2:2" md-gutter="30px" md-gutter-gt-sm="8px">
+  <md-grid-tile  ng-repeat="tile in selectedtiles" 
+                    ng-style="{'background': '#f2f2f2'}"
+                    md-colspan-gt-sm="{{tile.column}}"
+                    md-rowspan-gt-sm="{{tile.row}}"  >
+					<div layout-fill>
+					<div  ng-include src="tile.templateUrl">
+					</div>
+					</div>
+	</md-grid-tile>
+  </md-grid-list>
+</div>
