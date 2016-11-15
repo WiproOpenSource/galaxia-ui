@@ -14,9 +14,9 @@
         </md-input-container>
 	    </span>
 
+		
+	</div-->
   <div style="width:450px;position:relative;">
-
-
 
 
 
@@ -32,7 +32,7 @@
 		
 		<p style="clear:both;overflow: hidden;">
 		<span ng-show="vminfocus" style="text-align:right;width:50%;display: inline-block; float: left;line-height: 3.5em;font-size:20px;">
-		
+
 		CONTAINERS 	
 		</span>
 		
@@ -84,7 +84,7 @@
 		 <md-card-actions style="position:absolute" layout="row" layout-align="center">
           <md-button ng-click="focusVM(vm)" ng-if="vm != vminfocus"><i class="material-icons">view_module</i></md-button>
 		  
-		
+	
 		  <md-button ng-if="vm == vminfocus" ng-click = compare("vm")><i class="material-icons">insert_chart</i></md-button>
 		  
           <md-button ng-if="vm != vminfocus"><i class="material-icons" ng-click="openVMChartModal(vm)">insert_chart</i></md-button>
