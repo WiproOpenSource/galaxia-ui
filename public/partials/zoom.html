@@ -13,20 +13,13 @@
         <input ng-model="searchfilters.vmquery" type="text">{{searchfilters.vmquery}}
         </md-input-container>
 	    </span>
-	<!--div class="focussed-details">
-		<p ng-show="vminfocus">VM&nbsp;&nbsp;&nbsp;{{vminfocus.Host}}</p>
-		<p ng-show="containerinfocus" >Container&nbsp;&nbsp;&nbsp;{{containerinfocus.Name}}</p>
-		
-	</div-->
+
   <div style="width:450px;position:relative;">
 
 
-<!--
-ng-mouseleave="focusVM(false)" 
--->
 
-    <!--<md-card ng-repeat="vm in vms | pagination: curPage * pageSize | limitTo: pageSize"  ng-class="{'vm-focused': vm==vminfocus, 'style_prevu_kit': true}"
-		align="left" class="style_prevu_kit" style="background-color:{{vm_colors[$index%vm_colors.length]}}">-->
+
+
 		<md-card ng-repeat="vm in vms | filter: searchfilters.vmquery"  ng-class="{'vm-focused': vm==vminfocus, 'style_prevu_kit': true}"
 		align="left" class="style_prevu_kit" style="background-color:{{vm_colors[$index%vm_colors.length]}}">
 		<md-card-content>
@@ -39,7 +32,7 @@ ng-mouseleave="focusVM(false)"
 		
 		<p style="clear:both;overflow: hidden;">
 		<span ng-show="vminfocus" style="text-align:right;width:50%;display: inline-block; float: left;line-height: 3.5em;font-size:20px;">
-		<!--VM:&nbsp;&nbsp;&nbsp;{{vminfocus.name}}-->
+		
 		CONTAINERS 	
 		</span>
 		
@@ -56,16 +49,15 @@ ng-mouseleave="focusVM(false)"
 		</md-card-content>
 	 
 	
-	 <!-- <md-card style="background-color:#FFF;" ng-repeat="container in containerdata | pagination: curPage * containerPageSize | limitTo: containerPageSize" ng-show="vminfocus==vm" align="center" class="style_prevu_kit_child"
-        ng-mouseenter="focusContainer(container)" ng-mouseleave="focusContainer(false)" >-->
+
 		
 		<md-card style="background-color:#FFF;" ng-repeat="container in containerdata | filter:searchfilters.containerquery" ng-show="vminfocus==vm" align="center" class="style_prevu_kit_child"
-       ng-mouseleave="focusContainer(false)" > <!--  ng-mouseenter="focusContainer(container)"-->
+       ng-mouseleave="focusContainer(false)" > 
           <md-card-content layout="row" layout-padding layout-wrap layout-fill layout-align="center">
 		  <img src="../images/Docker.png" width="40" height="50">
 		  <div style="width:270px;" layout="row" layout-align="center">
 		  <span style="padding:0 5px;" ng-click="touchApp(container)"><i class="material-icons">touch_app</i></span> 
-		  <!--span style="padding-right:10px;padding-top:10px;" ng-click = compare("docker")><i class="material-icons">compare_arrows</i></span-->
+
 		  <span style="padding:0 5px;" ng-click="openChartModal(container)" ><i class="material-icons">insert_chart</i></span>
 		  <span style="padding:0 5px;">
 			<md-checkbox ng-model="container.compareselected" ng-true-value="true" ng-false-value="false"
@@ -92,7 +84,7 @@ ng-mouseleave="focusVM(false)"
 		 <md-card-actions style="position:absolute" layout="row" layout-align="center">
           <md-button ng-click="focusVM(vm)" ng-if="vm != vminfocus"><i class="material-icons">view_module</i></md-button>
 		  
-		 <!-- <md-button ng-if="vm == vminfocus" ng-click = compare("vm")><i class="material-icons">compare_arrows</i></md-button>-->
+		
 		  <md-button ng-if="vm == vminfocus" ng-click = compare("vm")><i class="material-icons">insert_chart</i></md-button>
 		  
           <md-button ng-if="vm != vminfocus"><i class="material-icons" ng-click="openVMChartModal(vm)">insert_chart</i></md-button>
@@ -106,16 +98,7 @@ ng-mouseleave="focusVM(false)"
 
   
 
-  <!--  <div class="pagination pagination-centered" ng-show="vms.length">
-		<ul class="pagination-controle pagination">
-			<li>
-				<button type="button" class="btn btn-primary" ng-disabled="curPage == 0" ng-click="curPage=curPage-1"> &lt; PREV</button>
-			</li>
-			<li>
-				<button type="button" class="btn btn-primary" ng-disabled="curPage >= datalists.length/pageSize - 1" ng-click="curPage = curPage+1">NEXT &gt;</button>
-			</li>
-		</ul>
-	   </div>-->
+
 	   </div>
    <div style="display:inline-block;float:right;margin-right:10%">
 	<md-card style="width:220px;height:220px;">
