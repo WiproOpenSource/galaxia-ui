@@ -26,11 +26,11 @@ var express = require('express')
    , session = require('express-session')
    , mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27018/galaxiadb");   
+mongoose.connect("mongodb://localhost:27017/galaxiadb");   
 
 var app = express();
 
-app.set('port', process.env.PORT || config.node_server_port);
+app.set('port', process.env.PORT || config.server.node_server_port);
 app.set('views', __dirname + '/views');
 
 app.use(bodyParser.json()); 
