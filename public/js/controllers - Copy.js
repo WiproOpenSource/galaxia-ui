@@ -17,7 +17,179 @@
           
 
 function maincontroller($scope, $timeout, $http, $window, dashboardservices, $mdDialog){
+	
+	$scope.vminfocus = false;
+	$scope.containerinfocus = false;
+	//$scope.containers=[1,2,3,4,5,6];
+	$scope.vms = [];
+	$scope.vm_colors=["#cb2025","#f8b334","#97bf0d","#00a096"]; 
+	$scope.vminfo = [];
+	$scope.curPage = 0;
+	$scope.pageSize = 3;
+	$scope.containerPageSize = 5;
+	$scope.containerdata = [];
+	$scope.vmcount = 0;
+	$scope.containercount = 0;
+	$scope.appcount = 0;
+	$scope.selectedcontainers = [];
+	$http.get("/getnodes/node").success(function(data){
+		console.log("inside getnodes",data);
+		$scope.vminfo = data;
+		//console.log("vminfo",$scope.vminfo);
+		//for(i=0;i<data.length;i++){
+			         var keys = Object.keys(data);
+		 //console.log(dta)
+
+									var i=0;
+									//var mod_response=[];
+									for(var key in keys){
+													var obj={};                                                                                                                                                                                                                                           //console.log(Object.keys(response)[i]);
+													obj.ip = keys[i]; //console.log(response[Object.keys(response)[i]]);
+													obj.name = data[keys[i]];
+													$scope.vms.push(obj);
+													i=i+1;
+									}
+									console.log(JSON.stringify($scope.vms));
+			/*for( i in data){
+			$scope.vms.push(data[i]);
+			console.log("vms",data[i]);)*/
+			getvmcontainerinfo($scope.vms[0]);
+			
+		
+	})
+	
+	$scope.selectedVMforCompare = function(){
+		var count = 0;
+		for(var i=0,j=$scope.vms.length;i<j;i++){
+			if($scope.vms[i].compareselected){
+				count++;
+			}
+		}
+		$scope.vmcount = count;
+	}
+	$scope.dashboardname;
+	var containerJson = {
+						"templatename":$scope.dashboardname,
+						"widgets": [],
+						"metrics": []
+						} 
+							containerJson.metrics.push(JSON.parse('{"name": "container_cpu_system_seconds_total","labels": [{"name": "cadvisor"}]}'));
+					
+	$scope.selectedContainerforCompare = function(containerdata){
+
+			var count = 0;
+			$scope.selectedcontainers = [];
+			for(var i=0,j=containerdata.length;i<j;i++){
+				if(containerdata[i].compareselected){
+					count++;
+					containerJson.widgets.push(containerdata[i].Name);
+				}
+				
+			}
+			$scope.containercount = count;		
+				
+	}
+	$scope.viewContainerDashboard = function(){
+		dashboardservices.setTemplateSelected($scope.dashboardname);
+		console.log("dashboard is"+$scope.dashboardname);
+		
+		containerJson.templatename = $scope.dashboardname;
+
+		console.log("widgets are "+JSON.stringify(containerJson));
+		$http.post("/savedashboard/",containerJson).success(function(data){
+          alert("Dashboard Created Successfully");
+		  $window.location.href = '#/dblink';
+	})
+	}
+	function getvmcontainerinfo(vm){
+		$http.get("/getnodes/container").success(function(cdata){
+				vm.containers = cdata;
+				$scope.containerdata = cdata;
+			})
+	}
+	
+	$scope.numberOfvmPages = function() {
+		return Math.ceil($scope.vm.containers.length / $scope.pageSize);
+		};
+        
+	$scope.numberOfcontainerPages = function() {
+		return Math.ceil($scope.containerdata.length / $scope.containerPageSize);
+		};	
+	
+	$scope.vms = [
+		//{"ip": "1.1.1.1", "containers": [ {"name": "container 1"} ]	}
+		
+	];
+	
+	$scope.compare = function(evt){
+		
+		if(evt == "vm"){
+			$scope.vmcount++;
+			console.log("vm count",$scope.vmcount++);
+			return;
+		}else if(evt == "docker"){
+			$scope.containercount++;
+			return;
+		}else if(evt == "application"){
+			$scope.appcount++;
+			return;
+		}
+	
+	}
+	$scope.openChartModal = function(containerName){
+		$scope.tempName = "dashboard_"+ containerName.Name;
+        dashboardservices.setTemplateSelected($scope.tempName);
+	
+	var containerJson = {
+		"templatename": "dashdahsfdfdfdf",
+		"widgets": [],
+		"metrics": []
+	} 
+	
+	containerJson.templatename = "dashboard_"+ containerName.Name;
+	containerJson.widgets.push(containerName.Name);
+	containerJson.metrics.push(JSON.parse('{"name": "container_cpu_system_seconds_total","labels": [{"name": "cadvisor"}]}'));
+		
+		$http.post("/savedashboard/",containerJson).success(function(data){
+          alert("Dashboard Created Successfully");
+           $mdDialog.show({
+				controller: DialogChartController,
+				templateUrl: 'partials/dialogchart.html',
+				parent: angular.element(document.body),
+				//locals: {
+				//	row: row
+				//},
+      //targetEvent: ev,
+		clickOutsideToClose:true,
+      //fullscreen: useFullScreen
+		});
+        });
+		
+		$scope.cancel = function() {	
+			$mdDialog.cancel();
+			console.log()
+		};
+	  
+	  }
+	  
+	  
+	$scope.focusVM = function(vm){
+		console.log('focusVM', vm);
+		$scope.vminfocus = vm;
+	};
+	
+	$scope.focusContainer = function(container){
+		console.log('container', container);
+		$scope.containerinfocus = container;
+	};
+	
+	$scope.dashboardConfigData = {
+		"templatename": "",
+		"widgets": [],
+		"metrics": []
+	};
 	$scope.selectedName=[];
+
       $scope.retrieveNodes = function(){
         $scope.actionlabel = dashboardservices.retrieve_label();
         $scope.val = dashboardservices.retrieve_value();
@@ -26,20 +198,28 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
         var actionlabel;
         if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container";
         else if($scope.actionlabel == "VM_Node" || $scope.actionlabel == "Create_VM") actionlabel = "node";
+        else if($scope.actionlabel == "Create_app") actionlabel = "mysql";
 
-        $http.get("/getnodes/"+actionlabel).success(function(data){
-
-              for(obj in data){
-                var str = data[obj].Name.split("_");
-				console.log("split data",JSON.stringify(str));
-                if(actionlabel =='container') data[obj].Name_short = str[1]+"_"+str[2];//only container names to be shortened
-                else data[obj].container_short = data[obj].container;
-                //dashboardservices.add_cshort(data[obj].container_short);
-                console.log("Container123",data[obj].Name_short);
-              }
-          $scope.containers = data;
-          console.log("CONTAINERS "+JSON.stringify($scope.containers));
-        });
+        if (actionlabel != "node" || actionlabel != "container"){
+        	$http.get("/getapp/"+actionlabel).success(function(data){
+	          console.log("applications "+JSON.stringify(data));
+	          $scope.appdata = data;
+	        });
+        }
+        else{
+	        $http.get("/getnodes/"+actionlabel).success(function(data){
+	              for(obj in data){
+	                var str = data[obj].Name.split("_");
+					console.log("split data",JSON.stringify(str));
+	                if(actionlabel =='container') data[obj].Name_short = str[1]+"_"+str[2];//only container names to be shortened
+	                else data[obj].container_short = data[obj].container;
+	                //dashboardservices.add_cshort(data[obj].container_short);
+	                console.log("Container123",data[obj].Name_short);
+	              }
+	          $scope.containers = data;
+	          console.log("CONTAINERS "+JSON.stringify($scope.containers));
+	        });
+	    }
       }
 	  
 	  
@@ -50,6 +230,8 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
         var actionlabel;
         if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container";
         else if($scope.actionlabel == "VM_Node" || $scope.actionlabel == "Create_VM") actionlabel = "node";
+        else if($scope.actionlabel == "Create_app") actionlabel = "app";
+		
 		console.log("actionlabel",actionlabel);
         $http.get("/getmetrics/"+actionlabel).success(function(data){
           $scope.metrics_list = data;
@@ -57,8 +239,19 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
         });
       }
 
+	  if(window.location.hash === "#/containers"){
+		dashboardservices.dshbrd.resetDashboardData();
+	  }
+				  
+	  $scope.selectWidgets = function(rows){
+		  //console.log('selectWidgets',arguments, $scope.searchItems);
+		  dashboardservices.dshbrd.setDashboardWidget(rows.map(function(row){ return row[2]; }));
+	  }
+	  
 		  $scope.configureDashboard = function() {
-        $window.location.href = '#/matrix'
+			console.log("dashboardservices", dashboardservices);
+			  
+			$window.location.href = '#/matrix'
 		  };
 
     /*  $scope.addSelectedContainers = function(rows) {
@@ -81,6 +274,12 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
         
       };*/
 	 $scope.addSelectedContainers = function(rows) {
+		 
+		 $scope.dashboardConfigData.widgets
+		 
+		 for(var i=0,j=rows.length;i<j;i++){
+			 
+		 }
 		//var full = '';
 				var str = rows.toString().split(",");
 				console.log('str name',str);
@@ -175,10 +374,15 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 	  
 	  $scope.openModal = function(row){
 		
+		dashboardservices.add_metricLabel(row);
+		
 		$mdDialog.show({
       controller: DialogController,
       templateUrl: 'partials/dialog.html',
       parent: angular.element(document.body),
+	  locals: {
+		  row: row
+	  },
       //targetEvent: ev,
       clickOutsideToClose:true,
       //fullscreen: useFullScreen
@@ -204,7 +408,12 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 	    //json_obj.names_list = $scope.selectedName;
 		console.log("names",json_obj.names_list);
 		console.log("POST OBJ",JSON.stringify(json_obj));
-        $http.post("/savedashboard/",json_obj).success(function(data){
+		
+		dashboardservices.dshbrd.setDashboardName($scope.dbname);
+		
+		var data = dashboardservices.dshbrd.getDashboardData();
+		
+        $http.post("/savedashboard/",data).success(function(data){
           alert("Dashboard Created Successfully");
           $window.location.href = '#';
         });
@@ -216,26 +425,94 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 		  console.log("Label",$scope.label);
 	  });*/
 	  }
+	  
+function DialogChartController($scope,$http,$mdDialog,dashboardservices){
+	$scope.hide = function() {
+      $mdDialog.hide();
+    };
+
+    $scope.cancel = function() {
+      $mdDialog.cancel();
+    };
+
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };
+} 
+
 
 function DialogController($scope,$http,$mdDialog,dashboardservices){
 	$scope.dialogContent = [];
-	$scope.keyspace = [];
+	$scope.labelkey = [];
+	var keys = []
+	$scope.key1=[];
 	$scope.name = [];
 	$scope.labelscope = [];
-	$scope.dataarray = [{keyspace: null, name: null, scope: null}];
+	$scope.index=0;
+	 $scope.selectedval = [];
+	 $scope.selectedrow = [];
+	//$scope.dataarray = [{keyspace: null, name: null, scope: null}];
+	$scope.dataarray = [{}];
+
 	$http.get('/getModalData').success(function(data){
-		$scope.dialogContent = data;
+		$scope.dialogContent = data[0].labels;
 		console.log("dialogContent",JSON.stringify($scope.dialogContent));
 		//console.log("dialog",JSON.stringify(data[0].label.keyspace));
+		$scope.key1 =[];
+		 //$scope.selectedval = [];
+		 //$scope.selectedrow = [];
 		for(i=0;i<$scope.dialogContent.length;i++){
-			$scope.keyspace.push($scope.dialogContent[i].label.keyspace);
-			console.log("keyspace",JSON.stringify($scope.keyspace));
-			$scope.name.push($scope.dialogContent[i].label.name);
-			console.log("name",JSON.stringify($scope.name));
-			$scope.labelscope.push($scope.dialogContent[i].label.scope);
-			console.log("scope",JSON.stringify($scope.labelscope));
-			//console.log("keyspace,name,labelscope",JSON.stringify($scope.keyspace),JSON.stringify($scope.name),JSON.stringify($scope.labelscope));
+			var keys = [];
+			keys.push($scope.dialogContent[i]);
+			console.log("keys",JSON.stringify(keys),keys[0].label.length);
+			for(j=0;j<keys[0].label.length;j++){
+				//var key1 = [];
+				var nextKey = Object.keys(keys[0].label[j]).toString();
+				console.log("nextkey",nextKey);
+				if (!($scope.key1.indexOf(nextKey) > -1)){
+				$scope.key1.push(nextKey);
+				}
+			}
+			console.log('key1',JSON.stringify($scope.key1),$scope.key1.length);
 		}
+		$scope.values = [];
+		var nextval = [];
+	
+		 $scope.x = [];
+		
+		for (k=0;k<$scope.key1.length;k++){
+				$scope.duparray = [];
+				 
+			//var nextval = $scope.dialogContent,"//"+$scope.key1[k];
+			//if($scope.dialogContent)
+			nextval = (JSON.search($scope.dialogContent,"//"+$scope.key1[k]));
+			console.log(nextval);
+			for(l=0;l<nextval.length;l++){
+		    if(!($scope.duparray.indexOf(nextval[l]) > -1)){
+				$scope.duparray.push(nextval[l]);
+				console.log("nextval",nextval[l]);
+			}
+			}
+			$scope.x.push($scope.duparray)
+		} 
+		console.log('values',$scope.x);
+		//console.log("keys",JSON.stringify(keys));
+		//	for(j=0;j<keys.length;j++){
+			//	var key1=[];
+			//	key1.push(Object.keys(keys[j].label[j]));
+				//console.log("key1",JSON.stringify(key1));
+			//}
+			
+			
+			
+			//$scope.labelkey.push($scope.dialogContent[i].label.image);
+			//console.log("keyspace",JSON.stringify($scope.keyspace));
+			//$scope.name.push($scope.dialogContent[i].label.name);
+			//console.log("name",JSON.stringify($scope.name));
+			//$scope.labelscope.push($scope.dialogContent[i].label.scope);
+			//console.log("scope",JSON.stringify($scope.labelscope));
+			//console.log("keyspace,name,labelscope",JSON.stringify($scope.keyspace),JSON.stringify($scope.name),JSON.stringify($scope.labelscope));
+		
 		
 	});
 	 $scope.cancel = function() {
@@ -246,23 +523,45 @@ function DialogController($scope,$http,$mdDialog,dashboardservices){
 	$scope.saveLabel = function(){
 		//$http.post('/savedashboard', {data: $scope.dataarray}).success(function(data,headers){
 			//console.log("Status",headers);
-			dashboardservices.add_metricLabel($scope.dataarray[0]);
-			dashboardservices.retrieve_metricLabel();
-			console.log('selected key',JSON.stringify($scope.dataarray[0]));
+			//dashboardservices.add_metricLabel($scope.dataarray[0]);
+			//dashboardservices.retrieve_metricLabel();
+			var keys = ['job', 'id', 'instance', 'name', 'image'];
+			var metric = {name: '', labels: []};
+			var metriclabel = dashboardservices.retrieve_metricLabel();
+			var metricdataarray = $scope.dataarray;
+			metric.name = metriclabel.data[0];
+			debugger;
+			$.each(metricdataarray, function(k, metricdata){
+				metric.labels[k] = [];
+				var d = {};
+				$.each(metricdata.selectedval, function(i,j){
+					d[keys[i]] = j;
+				});				
+				metric.labels[k] = d;			
+			});
+
+
+			console.log('selected key', metric);
+			dashboardservices.dshbrd.addMetric(metric);
 		
 	}
 	
-	$scope.addrow = function(){
-		$scope.dataarray.push({keyspace: null, name: null, scope: null});
+	$scope.addrow = function(){ 
+		//var targetarray = [];
+		console.log("select val",$scope.selectedval);
+		//angular.copy($scope.selectedval,targetarray)
+	$scope.dataarray.push({});
+		//$scope.selectedval = [];
+		console.log("dataarray",JSON.stringify($scope.dataarray));
 	}
 	
 	
 }
 
 function menucontroller($route,$scope, $timeout, $http, $window, $mdDialog, dashboardservices){
-	$scope.customize = function(){
-		$window.location.href='#/check';
-	}
+                $scope.customize = function(){
+                                $window.location.href='#/check';
+                }
     $scope.actionlabel = "View";
     $(document).ready(function(){
       $("button").click(function(){
@@ -271,6 +570,8 @@ function menucontroller($route,$scope, $timeout, $http, $window, $mdDialog, dash
           dashboardservices.add_label(id);
           dashboardservices.add_value(val);
 
+          console.log("ID iS "+id)
+ 
           if( id != undefined){
             switch(id) {
               case "view":
@@ -294,12 +595,53 @@ function menucontroller($route,$scope, $timeout, $http, $window, $mdDialog, dash
                 $window.location.href="#/containers";
                 $route.reload();
                 break;
+              case "Create_app":
+                $window.location.href="#/applications";
+                $route.reload();
+                break;  
             }
           }
       })
     });
 }
+
 function dashboardcontroller($scope, $timeout, $http, $window, $location,dashboardservices){
+ 
+      $scope.handleaction = function(label,dbname){
+        switch(label) {
+          case "view":
+                dashboardservices.add_link(dbname);
+                                                 $window.location.href = "#/dblink";
+              break;
+          case "modify":
+              $window.location.href = '#/matrix';
+              break;
+          case "delete":
+              $http.delete("/deletedashboard/"+dbname);
+ 
+                  $http.get("/getdashboards/").success(function(data){
+                      $scope.dashboards = data;
+                      alert("Dashboard Deleted Successfully");
+                      $window.location.href = '#/delete';
+                  })
+              break;
+        }
+      }
+ 
+      $scope.loaddashboards = function() {
+                                  var data1='';
+          $http.get("/getdashboards/").success(function(data){
+            $scope.dashboards = data;
+                                                data1=data;
+                                                //console.log("DASH",JSON.stringify($scope.dashboards));
+          });
+                                  //console.log("DASH DATA",data1);
+                                  $http.post("/reload/",data1).success(function(data,header){
+                                                  //console.log("UPDATED",header);
+                                  });
+      }
+
+	
 
       $scope.handleaction = function(label,link,dbname){
         switch(label) {
@@ -336,6 +678,7 @@ function dashboardcontroller($scope, $timeout, $http, $window, $location,dashboa
 		  });
       }
 }
+
 function searchcontroller($scope, $timeout, $http, $window, dashboardservices){
 
 		
@@ -380,7 +723,9 @@ function searchcontroller($scope, $timeout, $http, $window, dashboardservices){
          
 		}
 		$scope.configureDashboard = function() {
-        $window.location.href = '#/matrix'
+		
+			
+			$window.location.href = '#/matrix'
 		  };
       
 			/*var data = $.param({
@@ -438,7 +783,7 @@ function Checkcontroller($scope,$http) {
 				//console.log("URL",JSON.stringify($scope.url));
 			}
 		}
-
+		/*$scope.selected = [];
 		$http.get('/getTiles').success(function(data){
 			console.log("tile data",JSON.stringify(data));
 			if(data && data.length>0 && data[0].checkboxLabel.length>0){
@@ -449,7 +794,7 @@ function Checkcontroller($scope,$http) {
 					}
 				}
 			}
-		});
+		});*/
 
 		//$scope.items = res;
 	  //console.log('data',JSON.stringify($scope.items));
@@ -521,302 +866,149 @@ function Checkcontroller($scope,$http) {
  });
 }
 }
+function DialogDashboardController($scope,$mdDialog, dashboard,dashboardservices){
+	$scope.dashboard = dashboard;
+}
 
+function myController($scope, $timeout,$http,$mdDialog, dashboardservices) {
+    //$scope.templatename = [];
+    $scope.seriesLabel = [];
+    $scope.seriesData = [];
 
-function myController($scope, $timeout,$http) {
-	//$scope.templatename = [];
-	$scope.seriesLabel = [];
-	$scope.seriesData = [];
-	var index = 11;
-	var index1 =11;
-	var index2 =11;
-	
-	$scope.dashboards = [];
-	$http.get("/dashboard/templates").success(function(data){
-		for(i=0;i<data.length;i++){
-			//$scope.templatename.push(data[i].instance.templatename);
-			getDashboardDetails(data[i]);
-		}
-		$scope.dashboards = data;
-		console.log("templatename",JSON.stringify($scope.templatename));
-	});
-	
-	//$scope.myInterval = 5000;
-  $scope.noWrapSlides = false;
-  $scope.active = 0;
+    //$scope.myInterval = 5000;
+    $scope.noWrapSlides = false;
+    $scope.active = 0;
+    $scope.whereami = "line";
+    //$scope.templatename = "ABCD";
   
-	
-	var getDashboardDetails = function(dashboard){
-		///dashboard/templatedetails/:
-		///dashboard/chartdata/:templatename/:widget
-		$http.get('/dashboard/templatedetails/'+dashboard.instance.templatename).success(function(data){
-			dashboard.widgets = data;
-			//for(i=0;i<data.length;i++){
-				
-			getLabel(dashboard.instance.templatename,dashboard.widgets);
-		
-			//}
-		})
-	};
-	
-	      var getLabel = function(template,widgets){
-				
-		$('#dashboard').highcharts({
-            chart: {
-				zoomType: 'x',
-                type: 'spline',
-               // animation: Highcharts.svg, // don't animate in old IE
-                marginRight: 10,
-                events: {
-                    load: function () {
-
-                        // set up the updating of the chart each second
-                        var series = this.series[0];
-                        setInterval(function () {
-							$http.get('/dashboard/chartdata/'+template+'/cas1/'+index++).success(function(data){
-								console.log("data is"+JSON.stringify(data));
-									var x = data[0].value[0].x, // current time
-										y = data[0].value[0].y
-									series.addPoint([x, y], true, true);
-							})
-						}, 5000);
-						var series1 = this.series[1];
-                        setInterval(function () {
-							$http.get('/dashboard/chartdata/'+template+'/cas1/'+index1++).success(function(data){
-								console.log("data is"+JSON.stringify(data));
-									var x = data[0].value[0].x, // current time
-										y = data[0].value[0].y+Math.random();
-									series1.addPoint([x, y], true, true);
-							})
-						}, 5000);
-						var series2 = this.series[2];
-                        setInterval(function () {
-							$http.get('/dashboard/chartdata/'+template+'/cas1/'+index2++).success(function(data){
-								console.log("data is"+JSON.stringify(data));
-									var x = data[0].value[0].x, // current time
-										y = data[0].value[0].y * Math.random();
-									series2.addPoint([x, y], true, true);
-							})
-						}, 5000);
-                    }
-					}
-				},
-            title: {
-                text: 'USD to EUR exchange rate over time'
-            },
-            subtitle: {
-                text: document.ontouchstart === undefined ?
-                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-            },
-            xAxis: {
-                type: 'datetime'
-            },
-            yAxis: {
-                title: {
-                    text: 'Value'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            legend: {
-                enabled: false
-            },
-			/*plotOptions: {
-                area: {
-                    fillColor: {
-                        linearGradient: {
-                            x1: 0,
-                            y1: 0,
-                            x2: 0,
-                            y2: 1
-                        },
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
-                    },
-                    marker: {
-                        radius: 2
-                    },
-                    lineWidth: 1,
-                    states: {
-                        hover: {
-                            lineWidth: 1
-                        }
-                    },
-                    threshold: null
-                }
-            },*/
-			series:[{
-			  name: 'Tokyo',
-			  data: (function () {
-                    // generate an array of random data
-													var data = 	[{x:1370131200000, y:0.9695},
-                                                                {x:1370217600000, y:0.9648},
-                                                                {x:1370304000000, y:0.9645},
-                                                                {x:1370390400000, y:0.9638},
-                                                                {x:1370476800000, y:0.9549},
-                                                                {x:1370563200000, y:0.9562},
-                                                                {x:1370736000000, y:0.9574},
-                                                                {x:1370822400000, y:0.9543},
-                                                                {x:1370908800000, y:0.9519},
-                                                                {x:1370995200000, y:0.9498}]
-                        
-                    console.log(data)
-                    return data;
-                    
-                }())
-			  },{
-            name : 'Delhi',
-            data : (function () {
-                // generate an array of random data
-                var data2 = [{x:1370131200000, y:0.7695},
-                                                                {x:1370217600000, y:0.7648},
-                                                                {x:1370304000000, y:0.7645},
-                                                                {x:1370390400000, y:0.7638},
-                                                                {x:1370476800000, y:0.6549},
-                                                                {x:1370563200000, y:0.6562},
-                                                                {x:1370736000000, y:0.7574},
-                                                                {x:1370822400000, y:0.7543},
-                                                                {x:1370908800000, y:0.7951},
-                                                                {x:1370995200000, y:0.8498}]
-				console.log(data2);
-                return data2;
-            }())
-        },{
-            name : 'NewYork',
-            data : (function () {
-                // generate an array of random data
-                var data3 = [{x:1370131200000, y:0.6695},
-                                                                {x:1370217600000, y:0.5648},
-                                                                {x:1370304000000, y:0.6645},
-                                                                {x:1370390400000, y:0.5638},
-                                                                {x:1370476800000, y:0.4549},
-                                                                {x:1370563200000, y:0.6562},
-                                                                {x:1370736000000, y:0.7574},
-                                                                {x:1370822400000, y:0.6543},
-                                                                {x:1370908800000, y:0.6951},
-                                                                {x:1370995200000, y:0.7498}]
-				console.log(data3);
-                return data3;
-            }())
-        }]
-	});
-	}
+    $scope.selectedtiles = [];
+	$scope.allwidgets;	
     
-
-
-          /* series:[{
-                name: 'Tokyo',
-                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-            }, {
-                name: 'New York',
-                data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
-            }, {
-                name: 'Berlin',
-                data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-            }, {
-                name: 'London',
-                data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-            }] */
-			
-			  
-                //type: 'line',
-                //name: 'USD to EUR',
-                //data: data
-		 //});
-				
-			
-		//});
-		
-	//},5000);
-	
-	
-	$scope.getAlert = [];
-	$http.get("/alerts").success(function(data){
-		//for(i=0;i<)
-		$scope.getAlert.push(data[0].Alert);
-		console.log("Alerts",JSON.stringify($scope.getAlert[0]));
-	});
-
-	$scope.selectedtiles = [];
-	$http.get('/getTiles').success(function(data){
-		//for(obj in data){
-		//$scope.selectedtiles = data[obj].checkboxLabel;
-		//}
-		console.log('getTiles', JSON.stringify(data));
-		if(data.length>0){
-			for(i=0;i<data[0].checkboxLabel.length;i++){
-				$scope.selectedtiles.push(data[0].checkboxLabel[i]);
-				console.log("tile data",data[0].checkboxLabel[i]);
-			}
-		}
-	});
-	$scope.showtile = function(tile){
-		for( x=0;x<$scope.selectedtiles.length;x++){
-			if($scope.selectedtiles[x] == tile) return true;
-		}
-	}
-	
-	
-	/*copied from chartctrl 
-{
-  $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
-  $scope.data = [300, 500, 100];
-});
-	*/
-	$timeout(function(){
-		$http.get('/getPie').success(function(data){
-			$scope.labels = data.labels;
-			$scope.data = data.data;
-			console.log("Pie",$scope.labels,$scope.data);
-		});
-	},1000);
-	
-	/*$timeout(function(){
-	//$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-	$http.get('/getchart').success(function(data){
-		$scope.labels = data.labels;
-		$scope.series = data.series;
-		$scope.data = data.data;
-		console.log($scope.labels,$scope.series,$scope.data);
-	});
-  //$scope.series = ['Series A', 'Series B'];
-  /*$scope.data = [
-    [65, 59, 80, 81, 56, 55, 40],
-    [28, 48, 40, 19, 86, 27, 90]
-  ];
-	},1000);*/
-	//$http.get('/getchart').success(function(data){
-		//console.log("chartdata",data);
-		
-        //});
-	
-	
-  $scope.onClick = function (points, evt) {
-    console.log(points, evt);
-  };
-  $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-  $scope.options = {
-    scales: {
-      yAxes: [
-        {
-          id: 'y-axis-1',
-          type: 'linear',
-          display: true,
-          position: 'left'
-        },
-        {
-          id: 'y-axis-2',
-          type: 'linear',
-          display: true,
-          position: 'right'
-        }
-      ]
+    $scope.setTemplate = function(){
+                    $scope.templatename = dashboardservices.getTemplateSelected(); 
+                    console.log(" Template Is "+$scope.templatename)
+                    //$scope.dashboards = JSON.search($scope.dashboards,"//*[templatename='"+$scope.templatename+"']");
+                    var jsonobj = JSON.stringify({
+                                                    templatename:$scope.templatename
+                                    }
+                    )
+                    getDashboardDetails(JSON.parse(jsonobj));
     }
-  }	
-	
+
+    $scope.hereiam = function(page){
+                    $scope.whereami = page;
+    }
+
+    $scope.cancel = function() {
+                    $mdDialog.cancel();
+                    //console.log()
+    };
+
+    var getDashboardDetails = function(dashboard){
+                    $http.get('/dashboard/metrics/'+dashboard.templatename).success(function(data){       
+                                    dashboard.widgets = data;
+									$scope.allwidgets = data;
+                                    ////console.log("widgets",JSON.stringify(data));
+                                    plotChart(dashboard.templatename,data); 
+        })
+    };
+
+                function plotChart(dashboardname, metricdata){
+                                    var allCharts = [];
+                                    for (x=0;x<metricdata.length;x++){
+                                            console.log(JSON.stringify(metricdata[x]));
+                                            //var ctx = $('#'+$scope.whereami+"_"+dashboardname+"_"+metricdata[x].widget)
+											var ctx = $('#'+"temp"+x)
+											console.log(ctx)
+                                            var config = new Object({
+                                                                        type: 'line',
+                                                                        data: {
+                                                                            labels: [],
+                                                                            datasets: []
+                                                                        },
+                                                            options: {
+                                                                title:{
+                                                                    display:true,
+                                                                    text:metricdata[x].widget
+                                                                },
+                                                                tooltips: {
+                                                                    mode: 'label',
+                                                                },
+                                                                scales: {
+                                                                    xAxes: [{
+                                                                        scaleLabel: {
+                                                                            show: true,
+                                                                            labelString: 'Month'
+                                                                        }
+                                                                    }],
+                                                                    yAxes: [{
+                                                                        scaleLabel: {
+                                                                            show: true,
+                                                                            labelString: 'Value'
+                                                                        },
+                                                                    }]
+                                                                }
+                                               }             
+                                                                                });
+                                                                                //add as many datasets as number of labels
+                                                                                var metrics = JSON.search(metricdata[x],"//metrics");
+                                                                                for(mtrx=0;mtrx<metrics.length;mtrx++){
+                                                                                                var alllabels = metrics[mtrx].labels; //console.log(JSON.stringify(metrics[mtrx]))
+                                                                                                for(lbls=0;lbls<alllabels.length;lbls++){
+                                                                                                                config.data.datasets.push({
+                                                                                            label: metrics[mtrx].name,
+                                                                                            data: [],
+                                                                                            backgroundColor: [
+                                                                                                randomColor(0.9)
+                                                                                            ],
+                                                                                            borderColor: [
+                                                                                                randomColor(0.9)
+                                                                                            ],
+                                                                                            borderWidth: 2,
+                                                                                            fill: false
+                                                                                                    })
+                                                                                                }
+                                                                                }
+                                   allCharts.push(new Chart(ctx, config));
+                                                                                console.log("length of charts "+allCharts.length)
+ 
+                        }
+		               setInterval(function(){
+		                            $.each(allCharts, function(i, chart) {
+		                    $http.get('/dashboard/chartdata/'+dashboardname+'/'+chart.options.title.text).success(function(result){
+		                    //console.log("result "+JSON.stringify(result))
+		                        for(h=0;h<result.length;h++){
+		                             if (h==0) chart.data.labels.push(dhm(result[h].value.x)); //if (chart.data.labels.length > 8) chart.data.labels.shift();
+		                                            chart.data.datasets[h].data.push(result[h].value.y);//if (chart.data.length > 8) dataset.data.shift();
+		                                             console.log(chart.options.title.text);
+		                        }
+		                        chart.update();                                                   
+		                              })
+		                })
+		            },5000)                           
+                }
+ 
+                function dhm(t){
+                                var date = new Date(t);
+                    var cleanDate = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+                                return cleanDate
+                }
+ 
+    var randomColorFactor = function() {
+        return Math.round(Math.random() * 255);
+    };
+    var randomColor = function(opacity) {
+ 
+        return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
+    };
+                                                                               
+                $scope.showtile = function(tile){
+                                for( x=0;x<$scope.selectedtiles.length;x++){
+                                                if($scope.selectedtiles[x] == tile) return true;
+                                }
+                }
+               
+                $scope.onClick = function (points, evt) {
+    //console.log(points, evt);
+                };
 }

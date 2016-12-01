@@ -16,16 +16,13 @@
 <div>
 	<div class="dashboard-container">
 		<h2>{{templatename}}</h2>
-		<div class="dashboard"  ng-init="setTemplate()">
-				
-			<div > 
-
-				<div style="display:inline-block;width:500px;"><canvas  id="temp0" width="600" height="300" ></canvas></div>
-				<div style="display:inline-block;float:left;width:500px;"><canvas id="temp1" width="600" height="300" ></canvas></div>
-				<div style="display:inline-block;float:left;width:500px;"><canvas id="temp2" width="600" height="300" ></canvas></div>
-				
-				
+		<div class="dashboard" >
+			<div class="widget" style="width:50%;height:50%" ng-init="setTemplate()">
+				<canvas id="temp0" ></canvas>
+				<canvas id="temp1" ></canvas>	
+				<canvas id="temp2" ></canvas>	
 			</div>
+
 		</div>
 	</div>
 </div>

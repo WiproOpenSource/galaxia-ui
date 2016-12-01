@@ -20,6 +20,9 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 						$routeProvider.when('/containers', {
 					        templateUrl: 'partials/hostcontainers.html',
 					        controller: 'maincontroller'
+					    }).when('/applications', {
+					        templateUrl: 'partials/hostapplications.html',
+					        controller: 'maincontroller'
 					    }).when('/matrix', {
 					        templateUrl: 'partials/matrix.html',
 					        controller: 'maincontroller'
@@ -38,9 +41,6 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 					    }).when('/dblink', {
 					        templateUrl: 'partials/dashboardlink.html',
 					        controller: 'myController'
-					    }).when('/', {
-					        templateUrl: 'partials/trial.html',
-							controller:'myController'
 					    }).when('/dash', {
 					        templateUrl: 'partials/dashboard.html',
 							controller: 'myController'
@@ -56,8 +56,14 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 						}).when('/check',{
 							templateUrl:'partials/check.html',
 							controller:'Checkcontroller'
-						}).when('/zm',{
+						}).when('/',{
 							templateUrl:'partials/zoom.html',
+							controller:'maincontroller'
+						}).when('/application',{
+							templateUrl:'partials/hostapplication.html',
+							controller:'maincontroller'
+						}).when('/appmetrix',{
+							templateUrl:'partials/appmatrix.html',
 							controller:'maincontroller'
 						});
 							
@@ -77,6 +83,8 @@ appmodule.controller('Checkcontroller',Checkcontroller)
 appmodule.controller('myController',myController)
 appmodule.controller('DialogController',DialogController)
 appmodule.controller('DialogChartController',DialogChartController)
+
+
 //appmodule.controller('DialogDashboardController',DialogDashboardController)
 
 
@@ -140,15 +148,16 @@ appmodule.factory('dashboardservices', [function() {
 		var cshort = null;
 		var metricLabel = {};
 		var templateselected = null;
-		
+		var appname = null;
+		var instances = [];
+		var selectedmetrix;
+		var labelkeys; //Bala - 01Dec
 		var dashboardData = {},
 			defaultDashboardData = {
 				"templatename": "",
 				"widgets":[],
 				"metrics":[]
 			};
-		
-
 		function resetDashboardData(){
 			dashboardData = angular.copy(defaultDashboardData);
 		}
@@ -169,15 +178,13 @@ appmodule.factory('dashboardservices', [function() {
 				return dashboardData.widgets.splice( dashboardData.widgets.indexOf(widgetName), 1);
 		}
 		function addMetric(metric){
-			dashboardData.metrics.push(metric);
+			dashboardData["metrics"] = metric;
 		}
 		function removeMetric(metric){
 			var metricPosition = dashboardData.metrics.map(function(m){return m.name;}).indexOf(metric.name);
 			if(metricPosition!==-1)
 				return dashboardData.metrics.splice(metricPosition, 1);
 		}
-		
-		
 		return{	
 				dshbrd: {
 					resetDashboardData: resetDashboardData,
@@ -188,6 +195,32 @@ appmodule.factory('dashboardservices', [function() {
 					removeDashboardWidget: removeDashboardWidget,
 					addMetric: addMetric,
 					removeMetric: removeMetric
+				},
+				//Bala - 01Dec - Start
+				add_label_keys: function(x){
+					labelkeys = x;
+				},
+				retrieve_label_keys:function(){
+					return labelkeys;
+				},
+				//Bala - 01Dec - ENd
+				add_selected_matrics: function(x){
+					selectedmetrix = x;
+				},
+				retrieve_selected_matrics:function(){
+					return selectedmetrix;
+				},
+				add_instances: function(x){
+					instances = x;
+				},
+				retrieve_instances:function(){
+					return instances;
+				},
+				add_appname: function(x){
+					appname = x;
+				},
+				retrieve_appname:function(){
+					return appname;
 				},
 				add_containers: function(x) {
 					containers = x;

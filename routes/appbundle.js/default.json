@@ -1,0 +1,15 @@
+{
+							"name":"appbundle",
+							"tablename":"applicationbundle",
+							"fields":[{"projectName":"string","environmentList":"object","deploymentBundleList":"object","developerList":"object"}]
+						},
+						{
+							"name":"blueprint",
+							"tablename":"blueprint",
+							"fields":[]
+						},
+						{
+							"name":"deploymentprofile",
+							"tablename":"deploymentprofile",
+							"fields":[{"environment":"object", "blueprintId": "string", "deploymentType": "string", "domain": "string", "infraResources": "object"}]
+						}

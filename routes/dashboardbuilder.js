@@ -1,13 +1,23 @@
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var dashboardSchema = new mongoose.Schema({
+templatename : String,
+widgets : Array
+   })
+
+ var dbdetail = mongoose.model("dbdetail",dashboardSchema);
+
+
  module.exports = function(app) {
 	app.get('/dashboard/templates/', function(req, res, next) {
-		var dashboard = app.get('dashboard');
+		//var dashboard = app.get('dashboard');
 		var condition = {};
 		var fields = {};
 		condition.where ={};  
 		fields = 
 			{'_id':0,'templatename':1};
 
-			dashboard.find(condition,fields,null,function(err,result){ 
+			dbdetail.find(condition.where,fields,function(err,result){ 
 				if(err)
 					console.log("Error is : " +  err);
 				else{
@@ -21,7 +31,7 @@
 			});
 	});		
 	app.get('/dashboard/templatedetails/:templatename', function(req, res, next) {
-		var dashboard = app.get('dashboard');
+		//var dashboard = app.get('dashboard');
 		var templatename = req.params.templatename;
 		var condition = {};
 		var fields = {};
@@ -29,7 +39,7 @@
 		fields = 
 					{'_id':0,'widgets':1};
 		console.log("condition "+JSON.stringify(condition));			
-		dashboard.find(condition,fields,null,function(err,result){ 
+		dbdetail.find(condition.where,fields,function(err,result){ 
 			if(err)
 				console.log("Error is : " +  err);
 			else{
@@ -40,7 +50,7 @@
 				condition.where={};
 					condition.where = {"Title":{$in:wids}}; console.log("cccccc "+ JSON.stringify(condition));	
 					fields = {'_id':0};
-					dbmaster.find(condition,fields,null,function(err,reslt){
+					dbmaster.find(condition.where,fields,function(err,reslt){
 							if(err)
 								console.log("Error is : " +  err);
 							else {
@@ -56,15 +66,15 @@
 	});
 	//following API for modifying existing template	
 	app.post('/dashboard/templatesave/', [function(req, res, next) {
-		var dashboard = app.get('dashboard');
+		//var dashboard = app.get('dashboard');
 		var condition = {};
 		condition = {templatename:req.body.templatename};
 		var attributes = {}
-		attributes = {widgets: req.body.widgets}; 
+		attributes = {widgets: req.body.widgets}; //console.log("widgets "+attributes);
 		
 		console.log("condition "+JSON.stringify(condition));
 
-		dashboard.update(condition,attributes,function(err,result){ 
+		dbdetail.update(condition,attributes,function(err,result){ 
 			if(err)
 				next(err);
 			else {
@@ -75,10 +85,11 @@
 	
 	app.post('/dashboard/templatecreate/', [function(req, res, next) {
 		console.log("inside create");
-		var dashboard = app.get('dashboard');
+		//var dashboard = app.get('dashboard');
 		var attributes = {}
 		attributes = {templatename:req.body.templatename, widgets: req.body.widgets}; 
-		dashboard.save(attributes,function(err,result){ 
+		//console.log("condition "+JSON.stringify(attributes));
+		dbdetail.create(attributes,function(err,result){ 
 			if(err){
 				console.log(err+"error");
 				next(err);
@@ -91,13 +102,13 @@
 	},function(req, res, next) {res.redirect(307,'/dashboard/createmetrics/')}]);
 		
 	app.delete('/dashboard/remove/:templatename', function(req, res, next) {
-		var dashboard = app.get('dashboard');
+		//var dashboard = app.get('dashboard');
 		var templatename = req.params.templatename;
 		var condition = {};
 		var fields = {};
 		condition.where ={"templatename":{$eq:templatename}};  
 
-		dashboard.delete(condition,fields,null,function(err,result){ 
+		dbdetail.delete(condition,fields,null,function(err,result){ 
 			if(err)
 				console.log("Error is : " +  err);
 			else{

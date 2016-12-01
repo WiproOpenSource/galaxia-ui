@@ -1,14 +1,25 @@
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var selectSchema = new Schema({
+   checkboxLabel:Schema.Types.Mixed,
+   value:String
+});
+ var selectwidget = mongoose.model("selectwidget",selectSchema);
+
 module.exports = function(app){
 	app.post("/savedb/:val", function (req, res, next) {
-		var selectwidget = app.get('selectwidget');
+		//var selectwidget = app.get('selectwidget');
 		console.log(selectwidget);
 		console.log("Checkboxdata"+req.body);
 		console.log("Checkboxdata"+req.body);
 		
 			var selecteditems = {};
+			//var selecteditems = req.body.select;
 			var condition={};
 			condition = {selected: req.params.val};console.log("Condition"+JSON.stringify(condition));
+			//condition = {value: req.params.val};console.log("Condition"+JSON.stringify(condition));
 			var attributes = {};
+			//attributes = {value: req.params.val}; console.log("VAL "+JSON.stringify(attributes));
 			attributes = {checkboxLabel: req.body}; console.log("VAL "+JSON.stringify(attributes));
 			selectwidget.update(condition,attributes,function(err,result){ 
 			if(err)
@@ -22,7 +33,7 @@ module.exports = function(app){
 	
 
 	app.get("/getCheckbox",function(req,res,next){
-		var selectwidget = app.get('widget');
+		//var selectwidget = app.get('widget');
 		console.log(selectwidget);
 		var condition = {};
 		var fields = {};
@@ -48,7 +59,7 @@ module.exports = function(app){
 	
 	
 	app.get("/getTiles",function(req,res,next){
-		var selectwidget = app.get('selectwidget');
+		//var selectwidget = app.get('selectwidget');
 		var condition = {};
 		var fields = {};
 		condition.where = {};
@@ -63,6 +74,7 @@ module.exports = function(app){
 				    	results.push(result[i]);
 				    }
 					res.send(results);	
+						//	console.log("tiles"+JSON.stringify(results));
 					}
 				});
 	});

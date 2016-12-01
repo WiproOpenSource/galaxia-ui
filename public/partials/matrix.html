@@ -27,13 +27,11 @@
                 {{(searchItems = (metrics_list | filter: searchItem))}} 
 				
             </div>
-			<!--<p>{{searchItems}}</p>-->
+			<p>{{searchItems}}</p>
 			<div>
-     <!-- <mdt-table "mdt-row="{'data':searchItems,
-                      'table-row-id-key': 'id',
-                      'column-keys': ['name', 'desc']}" table-card="{visible: true, title: 'Metrics Parameters'}" selectable-rows="true" alternate-headers=""  selected-row-callback="addSelectedMatrix(rows)" paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" sortable-columns="true" animate-sort-icon="true">-->
+
         <mdt-table  mdt-row="{'data':searchItems, 'table-row-id-key': 'id','column-keys': ['name', 'description']}" 
-						selectable-rows="true" ng-click="myclick($event)"
+						selectable-rows=true ng-click="myclick($event)"
 					  paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" 
 					  selected-row-callback="addSelectedMatrix(rows,$event)">
 		<mdt-header-row>

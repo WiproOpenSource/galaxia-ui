@@ -10,7 +10,7 @@
 
 p {
     margin: 0 0 10px;
-    /*font-family: fantasy;*/
+    font-family: fantasy;
     padding-left: 50px;
 }
 
@@ -54,25 +54,6 @@ p {
   transform: scale(1);
 }
 
-.style_prevu_kit_appchild{
-	display: inline-block;
-  float: left;
-  /*padding-top: 20px;*/
-  border: 0;
-  /*padding-right: 10px;*/
-  width: 280px;
-  height: 240px;
-  position: relative;
-  -webkit-transition: all 200ms ease-in;
-  -webkit-transform: scale(1);
-  -ms-transition: all 200ms ease-in;
-  -ms-transform: scale(1);
-  -moz-transition: all 200ms ease-in;
-  -moz-transform: scale(1);
-  transition: all 200ms ease-in;
-  transform: scale(1);
-}
-
 .style_prevu_kit_child_child {
   border: 0;
   width: 60px;
@@ -104,10 +85,10 @@ p {
 
 .style_prevu_kit.vm-focused {
 	width: 800px;
-    height: 450px;
+    height: 500px;
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
     z-index: 10;
 }
 

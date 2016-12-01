@@ -1,0 +1,40 @@
+<div ng-controller="maincontroller">
+<md-card style="margin:0px">
+            <md-subheader>Filter by search</md-subheader>
+
+            <md-input-container style="margin:15px;">
+                <label>Search</label>
+                <input type="text" ng-model="filterName">
+            </md-input-container>
+
+            <div ng-hide="true">
+                {{(filteredItems = (nutritionList | filter: filterName))}}
+				
+            </div>
+			<p>{{filteredItems}}</p>
+        </md-card>
+  <mdt-table  style="color:black; "mdt-row="{'data': filteredItems,
+                      'table-row-id-key': 'id',
+                      'column-keys': ['name', 'calories', 'fat', 'carbs', 'protein', 'sodium', 'calcium', 'iron']}">
+    <mdt-header-row >
+      <mdt-column align-rule="left">Dessert (100g serving)</mdt-column>
+      <mdt-column align-rule="right">Calories</mdt-column>
+      <mdt-column align-rule="right">Fat (g)</mdt-column>
+      <mdt-column align-rule="right">Carbs (g)</mdt-column>
+      <mdt-column align-rule="right">Protein (g)</mdt-column>
+      <mdt-column align-rule="right">Sodium (mg)</mdt-column>
+      <mdt-column align-rule="right">Calcium (%)</mdt-column>
+      <mdt-column align-rule="right">Iron (%)</mdt-column>
+    </mdt-header-row>
+	<mdt-row ng-repeat=" it in filteredItems">
+	<md-cell>{{it.name}}</md-cell>
+	<md-cell>{{it.calories}}</md-cell>
+	<md-cell>{{it.fat}}</md-cell>
+	<md-cell>{{it.carbs}}</md-cell>
+	<md-cell>{{it.protein}}</md-cell>
+	<md-cell>{{it.sodium}}</md-cell>
+	<md-cell>{{it.calcium}}</md-cell>
+	<md-cell>{{it.iron}}</md-cell>
+	</mdt-row> -->
+  </mdt-table>
+  </div>
