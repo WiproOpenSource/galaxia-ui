@@ -17,68 +17,7 @@
 {
 	"server":{
 	  "node_server_port":3300,
-	  "dashboard_server_ip":"10.200.208.200",
-	  "dashboard_server_port":8050
-	},
-	"database":{
-	    "name": "galaxiadb",
-	    "uri": "mongodb://localhost:27017/GalaxiaDB",
-		"uri_": "mongodb://localhost:27017/OpenApp",
-	    "options": {
-                  "db": { "native_parser": true },
-                  "server": { "poolSize": 5 }
-                },
-    		"models": [
-                {
-                  "name":"dashboard",
-                  "tablename":"dbdetail",
-                  "fields":[{ "templatename": "string", "widgets": "object"}]
-                },
-                {
-                  "name":"dbmaster",
-                  "tablename":"dbmaster",
-                  "fields":[]
-                },
-                 {
-                  "name":"metric",
-                  "tablename":"metric",
-                  "fields":[{ "templatename":"string","widget": "string", "metrics": "object","unit_type":"string","sub_type":"string"}]
-                },
-                {
-                  "name":"entity",
-                  "tablename":"entity",
-                  "fields":[{ "name": "string", "id":"string", "type":"string", "ipaddress":"string", "port": "string"}]
-                },
-                {   
-                    "name": "selectwidget",
-                    "tablename": "selectwidget",
-                    "fields": [{"checkboxLabel":"Object","value":"String"}]
-                },
-        				{
-        					"name":"widget",
-        					"tablename":"widget",
-        					"fields":[]
-        				},
-        				{
-        					"name":"alert",
-        					"tablename":"alert",
-        					"fields":[]
-        				},
-						{
-							"name":"appbundle",
-							"tablename":"applicationbundle",
-							"fields":[{"projectName":"string","environmentList":"object","deploymentBundleList":"object","developerList":"object"}]
-						},
-						{
-							"name":"blueprint",
-							"tablename":"blueprint",
-							"fields":[]
-						},
-						{
-							"name":"deploymentprofile",
-							"tablename":"deploymentprofile",
-							"fields":[{"environment":"object", "blueprintId": "string", "deploymentType": "string", "domain": "string", "infraResources": "object"}]
-						}
-            ]
-   	}
+	  "dashboard_server_ip":"localhost",
+	  "dashboard_server_port":8080
+	}
 }
