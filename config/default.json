@@ -17,7 +17,7 @@
 {
 	"server":{
 	  "node_server_port":3300,
-	  "dashboard_server_ip":"localhost",
+	  "dashboard_server_ip":"10.200.208.200",
 	  "dashboard_server_port":7000
 	}
 

@@ -31,7 +31,7 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 				getvmcontainerinfo($scope.vms[0]);	
 	})
 	
-	/*$scope.selectedVMforCompare = function(){
+	$scope.selectedVMforCompare = function(){
 		var count = 0;
 			for(var i=0,j=$scope.vms.length;i<j;i++){
 				if($scope.vms[i].compareselected){
@@ -39,7 +39,7 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 				}
 			}
 		$scope.vmcount = count;
-	}*/
+	}
 	
 	$scope.dashboardname;
 	var containerJson = {
@@ -99,6 +99,13 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 		//{"ip": "1.1.1.1", "containers": [ {"name": "container 1"} ]	}
 		
 	];
+		$scope.curPage = 0;
+		$scope.pageSize = 3;
+
+		$scope.numberOfPages = function() 
+		 {
+		 return Math.ceil($scope.vms.length / $scope.pageSize);
+		 };
 	
 	$scope.openChartModal = function(containerName){
 		$scope.tempName = "dashboard_"+ containerName.Name;
@@ -197,9 +204,10 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 	 $scope.runningApp = function(appname){
 	 	 $scope.appnameis = appname;
 		 $scope.unit_type = dashboardservices.retrieve_label();
+		 console.log("asdd",$scope.unit_type);
 		 var appType = appname;
 		  dashboardservices.add_appname(appType);
-		  console.log(dashboardservices.retrieve_appname()); 
+		  //console.log(dashboardservices.retrieve_appname()); 
 
 		 if($scope.unit_type == 'Create_APP') unit = 'app';
 		 console.log("inside running app",appname,unit);
@@ -210,13 +218,57 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 			 $scope.application = data;
 			 console.log("GGGGGGGGGGGGGG "+JSON.stringify($scope.application),unit);
 			 dashboardservices.add_instances($scope.application)
+			 console.log("labels added",JSON.stringify(dashboardservices.retrieve_instances()));
 			 $window.location.href = "#/application";
 		});
 		  console.log(JSON.stringify($scope.application));
 	 }
+	$scope.appinstance = ['mysql','cassandra','postgres','mongodb','tomcat','jboss','db2','SQLserver'];
+	
+	$scope.opendiv = function(){
+		console.log("clicked*****");
+		$scope.ifselected = true;
+	}
+
+	$scope.closediv = function(){
+	 $scope.ifselected = false;
+	 }
+	 $scope.instancearray = [];
+	 $scope.clickInstance = function(ev){
+			console.log("Inside click instance")
+			$timeout(function(){
+				var $target = angular.element(ev.originalEvent.target);
+				if($target.hasClass('checkboxCell') || $target.parents('.checkboxCell').length>0){
+					var clickedTr = $target.parents('tr'),
+						rowSelected = clickedTr.hasClass('selectedRow'),
+						rowData = clickedTr.scope().rowData;
+						console.log("checkbox clicked", JSON.stringify(rowData.data[1]));
+						//dashboardservices.add_selected_matrics(rowData.data[0]);	
+						dashboardservices.add_instances(rowData.data);
+						console.log(JSON.stringify(dashboardservices.retrieve_instances()));
+						//if(rowSelected){
+						//	$scope.openModal(rowData);
+						//}
+						$scope.instancearray.push(rowData.data[1]);
+						dashboardservices.add_instancearray($scope.instancearray);
+						console.log("host",JSON.stringify($scope.instancearray));
+				}				
+			}, 100);
+		}
+	 
+	$scope.selectLabel = function(){
+		console.log('inside label');
+		$window.location.href = '#/label';
+	}
+		 
+	$scope.toggle = function (appname) {
+		if(appname != null){return true;}
+		else return false;
+	}
 
 	 $scope.getInstaces = function(){
-	 	$scope.applicationinstances = dashboardservices.retrieve_instances()	
+	 	$scope.applicationinstances = dashboardservices.retrieve_instances()
+		console.log("app instances", JSON.stringify($scope.applicationinstances));
 	 }
 	  
 	$scope.focusVM = function(vm){
@@ -244,36 +296,37 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
     $scope.retrieveNodes = function(){
         $scope.actionlabel = dashboardservices.retrieve_label();
         $scope.val = dashboardservices.retrieve_value();
-		console.log($scope.actionlabel+" jjjj")
         var actionlabel;
 		if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container";
 		else if($scope.actionlabel == "VM_Node" || $scope.actionlabel == "Create_VM") actionlabel = "node";
 		console.log("actionlabel",actionlabel);
+		dashboardservices.add_appname(actionlabel);
         $http.get("/getnodes/"+actionlabel).success(function(data){
 			console.log("container data",JSON.stringify(data));
             for(obj in data){
-				var str = data[obj].Name.split("_");
-				console.log("split data",JSON.stringify(str));
-                if(actionlabel =='container') data[obj].Name_short = str[1]+"_"+str[2];//only container names to be shortened
-                else data[obj].container_short = data[obj].container;
+				//var str = data[obj].Name.split("_");
+				//var str = data[obj].Name.split("_");
+				//console.log("split data",JSON.stringify(str));
+              //if(actionlabel =='container') data[obj].Name_short = str[1]+"_"+str[2];//only container names to be shortened
+               // else
+					data[obj].container_short = data[obj].container;
                 //dashboardservices.add_cshort(data[obj].container_short);
                 console.log("Container123",data[obj].Name_short);
             }
             $scope.containers = data;
             console.log("CONTAINERS "+JSON.stringify($scope.containers));
-			
-        });
+		});
     }
-	  
 	  
     $scope.retrieveMetrics = function(){
 		$scope.selectedMatrix=[];
 		$scope.actionlabel = dashboardservices.retrieve_label();
         var actionlabel;
+        //if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container";
         if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container";
         else if($scope.actionlabel == "VM_Node" || $scope.actionlabel == "Create_VM") actionlabel = "node";
 		console.log("actionlabel",actionlabel);
-        $http.get("/getmetrics/"+actionlabel).success(function(data){
+        $http.get("/getmetrics/"+actionlabel ).success(function(data){
 			$scope.metrics_list = data;
             console.log("Metrics "+JSON.stringify($scope.metrics_list));
         });
@@ -283,7 +336,10 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 
 		$scope.actionlabel = dashboardservices.retrieve_label();
 		var app_name = dashboardservices.retrieve_appname();
+		console.log("appname",app_name);
 		var actionlabel;
+		if($scope.actionlabel == "Container_Node" || $scope.actionlabel == "Create_Container" ) actionlabel = "container",app_name="docker";
+        else if($scope.actionlabel == "VM_Node" || $scope.actionlabel == "Create_VM") actionlabel = "node",app_name="docker";
 		if($scope.actionlabel == "Create_APP") actionlabel = "app";
 		$http.get('/getmetrics/'+actionlabel+'/'+app_name).success(function(data){
 			$scope.metrics_list = data;
@@ -296,7 +352,9 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 	}
 				  
 	$scope.selectWidgets = function(rows){
-		dashboardservices.dshbrd.setDashboardWidget(rows.map(function(row){ return row[2]; }));
+		//dashboardservices.dshbrd.setDashboardWidget(rows.map(function(row){ return row[2]; }));
+		dashboardservices.add_selectedinstances(rows)
+		console.log("selected rows",dashboardservices.retrieve_selectedinstances());
 	}
 	  
 	$scope.configureDashboard = function() {
@@ -335,16 +393,21 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 		}	
 	}
 		$scope.addSelectedMatrix = function(rows,ev) {
-        $scope.selectedMatrix=[];
-        console.log("addSelectedMatrix ",rows, ev);
-        var str = rows.toString().split(",");
-        var evenElements="";
-		for (i in str){
-        console.log(i,i%2);
-        if (i==0) evenElements = str[i];
-        else if (i%2 == 0) evenElements = evenElements+","+str[i]
-        }
-        $scope.selectedMatrix.push(evenElements);
+			$scope.selectedMatrix=[];
+			console.log("addSelectedMatrix ",rows, ev);
+			var str = rows.toString().split(",");
+			var evenElements="";
+			for (i in str){
+			console.log(i,i%2);
+			if (i==0) evenElements = str[i];
+			//else if (i%2 == 0) evenElements = evenElements+'\"'+','+'\"'+str[i];
+			else if (i%2 == 0) evenElements = evenElements+","+str[i];
+			}
+			$scope.selectedMatrix.push(evenElements.split(','));
+			console.log("ccdccccc",JSON.stringify($scope.selectedMatrix));
+			dashboardservices.add_recmetrics($scope.selectedMatrix[0]);
+			console.log(JSON.stringify($scope.selectedMatrix));
+			console.log("normal flow metrics",JSON.stringify(dashboardservices.retrieve_recmetrics()));
 	    };
 	  
 		$scope.myclick = function(clickevent){
@@ -357,9 +420,9 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 						rowData = clickedTr.scope().rowData;
 						console.log("checkbox clicked", JSON.stringify(rowData.data[0]));
 						dashboardservices.add_selected_matrics(rowData.data[0]);	
-						if(rowSelected){
-							$scope.openModal(rowData);
-						}
+						//if(rowSelected){
+						  //$scope.openModal(rowData);
+						//}
 				}				
 			}, 100);
 		}
@@ -376,33 +439,184 @@ function maincontroller($scope, $timeout, $http, $window, dashboardservices, $md
 				clickOutsideToClose:true,
 			});
 		}
-
-		$scope.saveDashboard = function() {
-        var json_obj = {};
-        json_obj.name = $scope.dbname;
-        json_obj.unit_type = "docker";
-        json_obj.metrics_list = $scope.selectedMatrix;
-		json_obj.labels = dashboardservices.retrieve_metricLabel();
-		console.log("retrieved labels",JSON.stringify(json_obj.labels));
-		console.log("matrix",json_obj.metrics_list);
-        json_obj.names_list = dashboardservices.retrieve_containers();
-		console.log("names",json_obj.names_list);
-		console.log("POST OBJ",JSON.stringify(json_obj));
 		
-
-		dashboardservices.dshbrd.setDashboardName($scope.dbname);
-		
-		var data = dashboardservices.dshbrd.getDashboardData();
-		//Bala - 01Dec - Start
-		data["type"] = "app";
-		data["subtype"] = dashboardservices.retrieve_appname();
-
-		//Bala - 01Dec - End
-		console.log(JSON.stringify(data));
-			$http.post("/savedashboard/",data).success(function(data){
-				alert("Dashboard Created Successfully");
-				$window.location.href = '#';
+		var recmetricsnames=[];
+		var buttontext;
+		$scope.getmetrics = function(ev){
+			var recmetrics = {metrics:[]};
+			var selectedapp = dashboardservices.retrieve_appname();
+			console.log("appname",selectedapp);
+			//if (selectedapp == null)  {selectedapp = "container"; dashboardservices.add_appname("docker")}
+			$http.get('/getrecmetrics/'+selectedapp).success(function(data){
+				console.log(JSON.stringify(data));
+				//console.log(JSON.stringify(data[0].metrics.length));
+				console.log("438 "+dashboardservices.retrieve_selectedinstances());
+				for (h=0;h<dashboardservices.retrieve_selectedinstances().length;h++){
+					for(i=0;i<data[0].metrics.length;i++){
+						//recmetricsnames[i] = data[0].metrics[i].name + dashboardservices.retrieve_selectedinstances()[h];
+						recmetricsnames[i] = data[0].metrics[i].name;
+						if (selectedapp == "container") {
+							data[0].metrics[i].label.name = dashboardservices.retrieve_selectedinstances()[h];
+						}else{
+							data[0].metrics[i].label.instance = dashboardservices.retrieve_selectedinstances()[h];
+						}
+						var x = data[0].metrics[i];
+						console.log("++++",JSON.stringify(x));
+						recmetrics.metrics.push(new Array(x));
+					}
+				}
+				console.log("modified data "+JSON.stringify(recmetrics))
+				console.log("rec metrics name",JSON.stringify(recmetricsnames));
+				dashboardservices.add_recmetrics(recmetricsnames);	
+			//	console.log("recmetrics name",JSON.stringify(dashboardservices.retrieve_recmetrics));
+			   	dashboardservices.dshbrd.addMetric(recmetrics);
 			});
+		}
+		
+		$scope.label_obj = [{"host":[],
+								"smetrics":[]
+								}];
+								
+		$scope.showLabel = function(){
+			var mname;
+			var mlabel;
+			console.log("inside showlabel");
+			//$scope.label_obj = [{"host":[],
+				//				"smetrics":[]
+				//				}];
+			//$scope.label_obj[0].host = dashboardservices.retrieve_instancearray();
+			console.log($scope.label_obj[0].host);
+			var metricdata = dashboardservices.retrieve_recmetrics();
+			console.log(metricdata);
+			var metricjson = {"name":'',"label":[]};
+			var metricjson = [];
+			for(i=0;i<metricdata.length;i++){
+				console.log(metricdata[i]);
+				metricjson[i] = {"name":'',"label":[]};
+				filldata(metricjson[i],metricdata[i]);	
+			}
+				console.log("metricjson",JSON.stringify(metricjson));
+			// $scope.label_obj[0].smetrics[0]=metricjson;
+			//$scope.label_obj[0].smetrics = dashboardservices.dshbrd.getDashboardData();
+			//console.log("final json",JSON.stringify($scope.label_obj));
+		}
+		
+		function filldata(mdata,metric){
+			var unittype = dashboardservices.retrieve_label();
+			if(unittype == "Create_APP"){
+			app = "app";
+			}
+			else { var app = dashboardservices.retrieve_appname();}
+			console.log(app)
+			$http.get('/getModalData/'+metric+"/"+app).success(function(data){
+				mdata = {"name":'',"label":[]};
+					console.log("metric label",JSON.stringify(data));
+					//console.log("length",data.labels.length);
+						mdata.name = data.name;
+						//if( data.labels.length == 0){alert("Metric has no label");}
+					for(i=0;i<data.labels.length;i++){
+							mdata.label.push(data.labels[i].label);
+							//mdata.label=data.labels[i].label;
+						
+					}
+					
+					console.log(JSON.stringify(mdata));
+					dashboardservices.add_labeldata(mdata);
+					
+				console.log(mdata);
+				$scope.label_obj[0].host = dashboardservices.retrieve_instancearray();
+				console.log($scope.label_obj[0].host);
+				console.log("service data",JSON.stringify(dashboardservices.retrieve_labeldata()));
+				$scope.label_obj[0].smetrics.push(dashboardservices.retrieve_labeldata());
+				console.log("data",JSON.stringify($scope.label_obj[0].smetrics[0].name));
+				$scope.key = $scope.label_obj[0].smetrics[0].label;
+				console.log("fkvdfk",$scope.key);
+				//for(i=0;i<$scope.label_obj[0].smetrics[0].label.length;i++){
+				//	$scope.key.push(JSON.stringify(Object.keys($scope.label_obj[0].smetrics[0].label[i])));
+				//}
+				console.log("data",JSON.stringify($scope.label_obj));
+				console.log("key",JSON.stringify($scope.key));
+			});
+		}
+		
+		/*var labelarray=[];
+		$scope.labelpush = function(){
+			console.log("checked");
+			console.log("checkbox value",$scope.labelcheck);
+			labelarray.push($scope.labelcheck);
+			dashboardservices.add_attachlabel(labelarray);
+			console.log("attach label data",dashboardservices.retrieve_attachlabel());
+		}
+		console.log("LABELARRAY",labelarray);
+		*/
+		$scope.checkedDataArray = [{"name":''}];
+		var attachmetric;
+		$scope.updateChecked = function(el,d,i){
+		console.log('updateChecked', el, d,i);
+		$scope.checkedDataArray = [{"name":'',"label":[]}];
+			if(d.isChecked){
+					$scope.checkedDataArray[0].label.push(d);
+					$scope.checkedDataArray[0].name = i;
+					attachmetric = dashboardservices.add_recmetrics(i);
+					dashboardservices.add_instances(d)
+			}
+			else{
+			$scope.checkedDataArray.splice($scope.checkedDataArray.indexOf(d), 1);
+			}
+			dashboardservices.dshbrd.addMetric(attachmetric);
+			console.log("checked array",JSON.stringify($scope.checkedDataArray));
+			console.log("services", JSON.stringify(dashboardservices.retrieve_recmetrics()));
+			console.log("services", JSON.stringify(dashboardservices.retrieve_instances()));
+			
+		};
+  
+		$scope.saveAttachedLabel = function(){
+			/*var metricdata = dashboardservices.retrieve_recmetrics();
+			console.log("attach label metric",metricdata);
+			var attach_obj = {"metrics":[{}]};
+			for(i=0;i<metricdata.length;i++){
+				attach_obj.metrics[0].name = metricdata[i];
+			}*/
+			$window.location.href = '#/appmetrix';
+		}
+		
+		$scope.saveDashboard = function(){
+			var json_obj = {};
+			json_obj.name = $scope.dbname;
+			console.log("db name",json_obj.name);
+	        json_obj.unit_type = "docker";
+	        //json_obj.metrics_list = $scope.selectedMatrix;
+	        json_obj.metrics_list = dashboardservices.retrieve_recmetrics();
+			console.log("metrics...",JSON.stringify(dashboardservices.retrieve_recmetrics()));
+			//json_obj.labels = dashboardservices.retrieve_metricLabel();
+			json_obj.labels = dashboardservices.retrieve_instances();
+			console.log("retrieved labels",JSON.stringify(json_obj.labels));
+			//console.log("matrix",json_obj.metrics_list);
+	       // json_obj.names_list = dashboardservices.retrieve_containers();
+	        json_obj.names_list = dashboardservices.retrieve_instances();
+			console.log("names",json_obj.names_list);
+			console.log("POST OBJ",JSON.stringify(json_obj));
+			console.log("dbanme",$scope.dbname);			
+
+			dashboardservices.dshbrd.setDashboardName($scope.dbname);
+			
+			var data = dashboardservices.dshbrd.getDashboardData();
+			console.log(JSON.stringify(data));
+			//data["widgets"] = recmetricsnames;
+			data["widgets"]=dashboardservices.retrieve_recmetrics();
+			//data["widgets"] = dashboardservices.retrieve_recmetrics();
+			var appnameX = dashboardservices.retrieve_appname();
+			if (appnameX == 'node') { data["type"] = "node"; data["subtype"] = "node" }
+			else if (appnameX == 'container') { data["type"] = "container"; data["subtype"] = "docker" }
+			else { data["type"] = "app"; data["subtype"] = appnameX }
+
+			//data["type"] = 'app'; if (dashboardservices.retrieve_appname() == "docker") { data["type"] = "container"}
+			//data["subtype"] = dashboardservices.retrieve_appname();			
+			console.log(JSON.stringify(data));
+				$http.post("/savedashboard/",data).success(function(data){
+					alert("Dashboard Created Successfully");
+					$window.location.href = '#/dashboards';
+				});
 		};
 	}
 
@@ -492,28 +706,36 @@ function DialogController($scope,$http,$mdDialog,dashboardservices){
 		$mdDialog.cancel();
 		console.log()
 	};
-	
-	$scope.saveLabel = function(){
+	$scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };
+	$scope.savemetric=[];
+	/*$scope.saveLabel = function(){
 		//Bala - 01Dec - Start
 		//var keys = ['job','instace_key','instance'];
 		var keys = dashboardservices.retrieve_label_keys();
 		//Bala - 01Dec - End
-		var metric = {name: '', labels: []};
+		var metric = {name: '', label: {}};
 		var metriclabel = dashboardservices.retrieve_metricLabel();
 		var metricdataarray = $scope.dataarray;
 		metric.name = metriclabel.data[0];
-
+		
 		$.each(metricdataarray, function(k, metricdata){
-			metric.labels[k] = [];
+			console.log("selected val",JSON.stringify(metricdata));
+			metric.label[k] = [];
 			var d = {};
 			$.each(metricdata.selectedval, function(i,j){
 				d[keys[i]] = j;
 			});				
-			metric.labels[k] = d;			
+			metric.label[k] = d;			
 		});
-		console.log('selected key', metric);
-		dashboardservices.dshbrd.addMetric(metric);
-	}
+		console.log("data array",JSON.stringify(metricdataarray));
+		metric.label = metric.label[0];//to be removed
+		console.log('selected key',JSON.stringify(metric));
+		$scope.savemetric.push(metric);
+		console.log("savemetric",JSON.stringify($scope.savemetric));
+		dashboardservices.dshbrd.addMetric(new Array(metric));
+	}*/
 	
 	$scope.addrow = function(){ 
 		console.log("select val",$scope.selectedval);
@@ -546,30 +768,33 @@ function menucontroller($route,$scope, $timeout, $http, $window, $mdDialog, dash
 					$scope.actionlabel = id;
 					$window.location.href = '#/delete';
 					break;
-					case "Container":
-					case "VM":
+					//case "Container":
+					case "Create_VM":
 					$scope.actionlabel = id;
-					$window.location.href = '#/searchnodes';
+					$window.location.href = '#/VM';
 					break;
 					case "Create_Container":
-					case "Create_VM":
-					case "Container_Node":
-					case "VM_Node":
+					//case "Create_VM":
+					//case "Container_Node":
+					//case "VM_Node":
 					$window.location.href="#/containers";
 					$route.reload();
+					break;
+					case "Create_APP":
+					$window.location.href="#/selectapp";
 					break;
 				}
 			}
         })
     });
-	$scope.showPrompt = function(ev) {
+	$scope.showPrompt = function(ev){
 		console.log("prompt");
 		$mdDialog.show({
 		  controller: AppDialogController,
 		  templateUrl: 'partials/appdialog.html',
 		  parent: angular.element(document.body),
 		  targetEvent: ev,
-		  clickOutsideToClose:true,
+		  clickOutsideToClose:false,
 		  fullscreen: $scope.customFullscreen 
 		})
 		
@@ -584,7 +809,7 @@ function AppDialogController($scope, $mdDialog) {
     $scope.cancel = function() {
       $mdDialog.cancel();
     };
-
+	
     $scope.answer = function(answer) {
       $mdDialog.hide(answer);
     };
@@ -794,7 +1019,7 @@ function DialogDashboardController($scope,$mdDialog, dashboard,dashboardservices
 	$scope.dashboard = dashboard;
 }
 
-function myController($scope, $timeout,$http,$mdDialog, dashboardservices) {
+function myController($scope, $timeout,$http,$mdDialog,$interval,$window, dashboardservices) {
                
 	$scope.seriesLabel = [];
 	$scope.seriesData = [];
@@ -842,27 +1067,147 @@ function myController($scope, $timeout,$http,$mdDialog, dashboardservices) {
 			plotChart(dashboard.templatename,data); 
         })
     };
- 
-    function plotChart(dashboardname, metricdata){
+	var myInterval;
+	function plotChart(dashboardname, metricdata){
+         console.log("Inside plotChart "+dashboardname+" "+metricdata)
+        var allCharts = [];
+
+                        for (x=0;x<metricdata.length;x++){
+                console.log(JSON.stringify(metricdata[x]));
+                var ctx = $('#'+"temp"+x)
+                                console.log(ctx)
+                var config = new Object({
+                                        type: 'line',
+                                        
+                                        data: {
+                                                labels: [],
+                                                datasets: []
+										},
+                                        options: {
+                                                showTooltip:true,
+                                                responsive:true,
+                                                title:{
+                                                display:true,
+                                                text:metricdata[x].widget
+                                        },
+                                        tooltips: {
+
+                                                callbacks: {
+                                                        //label: function(tooltipItem, data) {
+                                                        x:Number,
+                                                        y:Number,
+                                                        point:function(){
+                                                                console.log("inside point");
+                                                        }
+                                                }
+                                        },
+                                        hover:{
+                                                mode:'point'
+                                        },
+                                        scales: {
+                                                xAxes: [{
+                                                        scaleLabel: {
+                                                                show: true,
+                                                                labelString: 'Month'
+                                                        }
+                                                }],
+                                                yAxes: [{
+                                                        scaleLabel: {
+                                                                show: true,
+                                                                labelString: 'Value'
+                                                        },
+                                                }]
+                                        }
+                                        }             
+                });
+                        //add as many datasets as number of labels
+                                var metrics = JSON.search(metricdata[x],"//metrics");
+                                var bkcolor;
+                                for(mtrx=0;mtrx<metrics.length;mtrx++){
+                                        config.data.datasets.push({
+                                                label: metrics[mtrx].name,
+                                                data: [],
+                                                backgroundColor: [
+                                                    bkcolor = randomColor(0.9)
+                                                ],
+                                                borderColor: [
+                                                    bkcolor
+                                                ],
+                                                borderWidth: 0,
+                                                fill: false
+                                        })
+                                }
+                        allCharts.push(new Chart(ctx, config));
+                        console.log("length of charts "+allCharts.length)
+                         }
+        
+        var myInterval = setInterval(function(){
+            $.each(allCharts, function(i, chart) {
+                    $http.get('/dashboard/chartdata/'+dashboardname+'/'+chart.options.title.text).success(function(result){
+                          //console.log("Recieved "+JSON.stringify(result))
+                        for(h=0;h<result.length;h++){
+                          var dtnow = new Date(result[h].value.x*1000);
+                          //if (chart.data.labels.length > 5) chart.data.labels.shift();
+                            chart.data.labels.push(dtnow.getHours()+":"+dtnow.getMinutes()+":"+dtnow.getSeconds()); 
+                            //if (chart.data.datasets[h].data.length > 15) chart.data.datasets[h].data.shift(); 
+                            var value = parseInt(result[h].value.y);
+                            //if (value >= 1000) value = value + "K";
+                            chart.data.datasets[h].data.push(value);
+                            console.log(chart.options.title.text);
+                        }
+                        chart.update();                                                   
+                    })
+            })
+        	$scope.currPath = $window.location.hash;
+			console.log("currPath",$scope.currPath);
+			if($scope.currPath != '#/dblink'){
+				stopInterval();
+			}
+		
+		},5000)
+
+		function stopInterval(){
+				 clearInterval(myInterval);
+				 console.log("STOPPED");
+		}
+     //   console.log("id............."+id)
+    }
+	
+	
+   /* function plotChart(dashboardname, metricdata){
     	console.log("Inside plotChart "+dashboardname+" "+metricdata)
         var allCharts = [];
+		showTooltips:true; 
 			for (x=0;x<metricdata.length;x++){
                 console.log(JSON.stringify(metricdata[x]));
+				
                 var ctx = $('#'+"temp"+x)
 				console.log(ctx)
                 var config = new Object({
 					type: 'line',
 					data: {
-					labels: [],
-					datasets: []
+						labels: [],
+						datasets: []
                     },
 					options: {
+						
+						responsive:true,
 						title:{
-						display:true,
-						text:metricdata[x].widget
+							display:true,
+							text:metricdata[x].widget
 					},
 					tooltips: {
-						mode: 'label',
+						callbacks: {
+							//label: function(tooltipItem, data) {
+								x:Number,
+								y:Number,
+							    point:function(){
+								console.log("inside point");
+						}
+					}
+						},
+					hover: {
+                    mode: 'point'
 					},
 					scales: {
 					xAxes: [{
@@ -875,7 +1220,7 @@ function myController($scope, $timeout,$http,$mdDialog, dashboardservices) {
 						scaleLabel: {
 							show: true,
 							labelString: 'Value'
-						},
+						}
 					}]
 					}
 					}             
@@ -899,28 +1244,42 @@ function myController($scope, $timeout,$http,$mdDialog, dashboardservices) {
 				})
 			}
 		}
+
         allCharts.push(new Chart(ctx, config));
         console.log("length of charts "+allCharts.length)
  
             }
-        setInterval(function(){
+      myInterval = setInterval(function(){
+		   var count = 0;
             $.each(allCharts, function(i, chart) {
-	            $http.get('/dashboard/chartdata/'+dashboardname+'/'+chart.options.title.text).success(function(result){
+	            $http.get('/dashboard/chartdata/'+dashboardname+'/'+chart.options.title.text+'/'+count++).success(function(result){
 	            	console.log("Recieved "+result)
 	                for(h=0;h<result.length;h++){
-	                if (h==0) chart.data.labels.push(dhm(result[h].value.x+1000)); 
+	                if (h==0) chart.data.labels.push(dhm(result[h].value.x)); 
 	                    chart.data.datasets[h].data.push(result[h].value.y);
 	                    console.log(chart.options.title.text);
 	                }
 	                chart.update();                                                   
 	            })
             })
-        },5000)                           
-    }
- 
+			$scope.currPath = $window.location.href;
+			console.log("currPath",$scope.currPath);
+			if($scope.currPath != 'http://localhost:3300/#/dblink'){
+				stopInterval();
+			}
+        },5000)   
+		function stopInterval(){
+				 clearInterval(myInterval);
+				 console.log("STOPPED");
+		}
+		
+    }*/
+	
     function dhm(t){
+
         var date = new Date(t); 	
-        var cleanDate = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()+':'+date.getMilliseconds();
+		console.log(date);
+        var cleanDate = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 		console.log("Date is",cleanDate);
         return cleanDate
     }

@@ -102,6 +102,11 @@
     margin: 0 20px;
 }
 /*style for corousel*/
+element.style {
+    background-color: #042c2c;
+}
 
-
+md-grid-list {
+  background-color: black
+}
 

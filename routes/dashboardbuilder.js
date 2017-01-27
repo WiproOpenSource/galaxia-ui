@@ -85,6 +85,7 @@ widgets : Array
 	
 	app.post('/dashboard/templatecreate/', [function(req, res, next) {
 		console.log("inside create");
+		console.log("BODY",JSON.stringify(req.body));
 		//var dashboard = app.get('dashboard');
 		var attributes = {}
 		attributes = {templatename:req.body.templatename, widgets: req.body.widgets}; 
@@ -95,7 +96,7 @@ widgets : Array
 				next(err);
 			}
 			else {
-				console.log(result)
+				//console.log(result)
 				next();
 			}
 		});

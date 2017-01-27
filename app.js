@@ -26,7 +26,7 @@ var express = require('express')
    , session = require('express-session')
    , mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27017/galaxiadb");   
+mongoose.connect("mongodb://localhost:27017/GalaxiaDB");   
 
 var app = express();
 

@@ -1,0 +1,27 @@
+<!--<div ng-cloak ng-init="showLabel()" style="width:650px;height:300px;">-->
+<div ng-cloak ng-init="showLabel()">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab ng-repeat = "host in label_obj[0].host"  label="{{host}}">
+        <md-content class="md-padding">
+          <p class="md-headline">Select Labels</p> 
+			<div ng-repeat="i in label_obj[0].smetrics">
+				<p>{{i.name}}</p>
+				<div layout="row" layout-padding layout-wrap layout-fill>
+				<!--<md-card  style="background-color:#F0F0F0" ng-repeat="l in label_obj[0].smetrics[0].label track by $index">-->
+				<md-card  style="background-color:#F0F0F0" ng-repeat="l in i.label track by $index">
+					<md-card-content>
+						<div ng-repeat="(key,val) in l">
+							<span ng-repeat="(key1,val1) in val"><b>{{key1}}</b> :{{val1}} </span>
+						</div>
+					</md-card-content>
+					<input type="checkbox" ng-model="l.isChecked" ng-change="updateChecked(this,l,i.name)">
+				</md-card>
+				</div>
+			</div>
+			<md-button class="md-primary md-raised" ng-click="saveAttachedLabel()">Save</md-button>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

@@ -1,0 +1,78 @@
+<!--
+# Copyright 2016 - Wipro Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+	<div ng-cloak ng-init="retrieveNodes()">
+ <!--  <input type="text" value = "Search" placeholder="Search" ng-model="searchItem">-->
+  <md-card>
+    <md-card-content layout="row" layout-align="center" class="layout-align-center-stretch layout-row"> 
+		<div style="width:100%">
+		<div style="height:10%;margin-left:60%">
+		<md-input-container >
+                <label>Search</label>
+                <input type="text" ng-model="searchItem">
+            </md-input-container>
+		</div>	
+			<!--<p>{{vms}}</p>-->
+		<div ng-hide="true">
+                {{(searchItems = (vms | filter: searchItem))}}
+				
+            </div>
+			<div  style="margin-left:25%;margin-top:5%;width:40%;float:left">
+			<mdt-table  mdt-row="{	'data':searchItems,
+                      				'table-row-id-key': 'instance',
+                      				'column-keys': ['name.nodename','name.host','name.instance']
+                      			}" 
+                      			selectable-rows="true" ng-click="clickInstance($event)"
+					  			paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}" 
+					  			table-card="{visible: true, title: 'Running VMs'}" 
+					  			selected-row-callback="selectWidgets(rows)">
+    <mdt-header-row >
+      <!--<mdt-column align-rule="left">Container</mdt-column>-->
+		  <mdt-column align-rule="left">Name</mdt-column>
+		  <mdt-column align-rule="left">Host</mdt-column>
+		  <mdt-column align-rule="left">Instance</mdt-column>
+		  
+     <!-- <mdt-column align-rule="right">Id</mdt-column>-->
+    </mdt-header-row>
+	
+  </mdt-table>
+
+  </div>	
+    <div ng-show="ifselected" style="height:100%;width:35%;display:inline;float:right;margin-top:4%;">
+		<md-card style="height:180px;width:300px;margin-left:10px;">
+			<md-card-title>
+				<md-card-title-text>
+					Create Dashboard
+				</md-card-title-text>
+			</md-card-title>
+		<md-input-container>
+			<input ng-model="dbname1"  placeholder="Save dashboard">
+		</md-input-container>
+		<md-card-actions layout="row" layout-align="end center">
+          <md-button  class="md-primary" ng-click="saveDashboard()">Save</md-button>   
+        </md-card-actions>
+		</md-card>
+  </div>
+	  </div>
+    </md-card-content>
+  </md-card>
+  
+   <div>  
+      <span><md-button class="md-accent md-raised md-hue-1"  ng-click="configureAppDashboard()">choose metrics</md-button></span>
+      <span><md-button class="md-accent md-raised md-hue-1"  ng-click="opendiv();getmetrics($event)">recommended metrics</md-button></span>
+  </div>
+ <!-- <md-button class="md-accent md-raised md-hue-1" ng-show="actionlabel.indexOf('eate') == 2" ng-click="configureDashboard()">Customise</md-button>-->
+
+</div>

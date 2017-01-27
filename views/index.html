@@ -54,6 +54,7 @@
 			<link rel="stylesheet" href="../bower_components/mdDataTable-master/dist/md-data-table-style.css">
 			<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 			<link rel="stylesheet" href="https://cdn.materialdesignicons.com/1.4.57/css/materialdesignicons.min.css">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	
 	</head>
     <body>
@@ -86,9 +87,10 @@
 										<md-menu>
 											<md-button id="create" ng-click="$mdOpenMenu()">Create</md-button>
 											<md-menu-content>
-												<md-menu-item><md-button id="Create_Container" value="Containers">Containers - Dashboard</md-button></md-menu-item>
-												<md-menu-item><md-button id="Create_VM" value="Virtual Machines">Virtual Machines - Dashboard</md-button></md-menu-item>
-												<md-menu-item><md-button id="Create_APP" value="Applications" ng-click="showPrompt($event)">Application - Dashboard</md-button></md-menu-item>
+												<md-menu-item><md-button id="Create_Container" ng-disabled="false"  value="Containers">Containers - Dashboard</md-button></md-menu-item>
+												<md-menu-item><md-button id="Create_VM"  ng-disabled="false" value="Virtual Machines">Virtual Machines - Dashboard</md-button></md-menu-item>
+												<!--<md-menu-item><md-button id="Create_APP" value="Applications" ng-click="showPrompt($event)">Application - Dashboard</md-button></md-menu-item>-->
+												<md-menu-item><md-button id="Create_APP" value="Applications" >Application - Dashboard</md-button></md-menu-item>
 											</md-menu-content>
 										</md-menu>
 								    </md-menu-item><md-menu-divider></md-menu-divider>
@@ -120,7 +122,7 @@
 				</div>
 				<br>
 
-				<!-- Footer --> 
+				<!-- Footer
 				<md-toolbar class="md-whiteframe-z3" style="position:fixed;bottom:0;">
 					<div layout="row" flex >
 						<footer class="mdl-mini-footer" >
@@ -132,7 +134,7 @@
 							</div>
 						</footer>
 					</div>
-				</md-toolbar>
+				</md-toolbar> -->
 			</div>
 		</div>
 	</body>

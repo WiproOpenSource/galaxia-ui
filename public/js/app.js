@@ -65,6 +65,15 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 						}).when('/appmetrix',{
 							templateUrl:'partials/appmatrix.html',
 							controller:'maincontroller'
+						}).when('/selectapp',{
+							templateUrl:'partials/appdialog.html',
+							controller:'maincontroller'
+						}).when('/label',{
+							templateUrl:'partials/metriclabel.html',
+							controller:'maincontroller'
+						}).when('/VM',{
+							templateUrl:'partials/hostVM.html',
+							controller:'maincontroller'
 						});
 							
 					 
@@ -131,7 +140,13 @@ appmodule.controller('DialogChartController',DialogChartController)
   };
 })*/
 
-
+appmodule.filter('pagination', function(){
+	 return function(input, start)
+	{
+		  start = +start;
+		  return input.slice(start);
+	 };
+});
 appmodule.filter('toArray', function () {
   return function (obj, addKey) {
     if (!(obj instanceof Object)) {
@@ -151,6 +166,11 @@ appmodule.factory('dashboardservices', [function() {
 		var appname = null;
 		var instances = [];
 		var selectedmetrix;
+		var recmetrics;
+		var instancearray;
+		var labeldata;
+		var attachlabel;
+		var selectedinstances=[];
 		var labelkeys; //Bala - 01Dec
 		var dashboardData = {},
 			defaultDashboardData = {
@@ -264,6 +284,36 @@ appmodule.factory('dashboardservices', [function() {
 				},
 				retrieve_metricLabel: function(){
 					return metricLabel;
+				},
+				add_recmetrics: function(x){
+					recmetrics = x;
+				},
+				retrieve_recmetrics:function(){
+					return recmetrics;
+				},
+				add_selectedinstances:function(x){
+					selectedinstances = x;
+				},
+				retrieve_selectedinstances:function(){
+					return selectedinstances;
+				},
+				add_instancearray:function(x){
+					instancearray =x;
+				},
+				retrieve_instancearray:function(){
+					return instancearray;
+				},
+				add_labeldata:function(x){
+					labeldata =x;
+				},
+				retrieve_labeldata:function(){
+					return labeldata;
+				},
+				add_attachlabel:function(x){
+					attachlabel =x;
+				},
+				retrieve_attachlabel:function(){
+					return attachlabel;
 				}
 		}
 }])

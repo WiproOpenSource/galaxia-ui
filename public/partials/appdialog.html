@@ -1,13 +1,32 @@
-<md-dialog ng-controller ="maincontroller">
-	
-		<p class='md-body-1'>Enter Application Name</p>
-
-
+<!--<md-dialog ng-controller ="maincontroller">
+		<p ng-hide="appname" class='md-body-1' style="text-align:right;color:#2196f3"><i class="material-icons" ng-click="cancel()">close</i></p>
 		<md-input-container>
 			<label> Application Name</label>
-			<input type="text" ng-model="appname">
-			
+			<input type="text" ng-model="appname">	
 		</md-input-container>
+		<md-button   ng-show="appname" class="md-primary" ng-click="runningApp(appname);answer('Enter');toggle(appname)">Enter</md-button>
+<!--</md-dialog>-->
 
-			<md-button class="md-primary" ng-click="runningApp(appname)">Enter</md-button>
-</md-dialog>
+<div>
+<md-card style="width:30%;margin-top:20%">
+	<md-card-title>
+		<md-card-title-text>
+		Select Application
+		</md-card-title-text>
+	</md-card-title>
+	<md-input-container class="md-block" flex-gt-sm>
+		<label>Application Instances</label>
+		<md-select ng-model="instance">
+			<md-option ng-repeat="app in appinstance" value="{{app}}">
+				{{app}}
+			</md-option>
+		</md-select>
+	</md-input-container>
+	<md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-primary" ng-click = "runningApp(instance)">Enter</md-button>
+          
+        </md-card-actions>
+	</md-card-content>
+	
+</md-card>
+</div>
