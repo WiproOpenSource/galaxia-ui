@@ -25,7 +25,6 @@ app.get('/getnodes/:node_type', function(req, res, next) {
 		console.log("Got error: " + e.message);
 		next(e); 
 	});
-	
 	});	
 
 app.get('/getmetrics/:node_type', function(req, res, next) {
@@ -138,11 +137,8 @@ console.log(options.url)
 		 	console.log("Got error: " + e.message);
 		 	next(e);			
 		});
-		
-	
+
 });	
-
-
 
 
 app.get('/getAppInstances/:unitType/:appType',function(req,res,next){
@@ -164,7 +160,7 @@ console.log(options.url)
 	console.log("Got error: " + e.message);
 	next(e); 
 });
-	
+
 });
 
 app.get('/getrecmetrics/:app',function(req,res,next){
@@ -185,12 +181,11 @@ app.get('/getrecmetrics/:app',function(req,res,next){
 
 							var jsonResult = JSON.parse(JSON.stringify(result))
 							console.log("abcd",jsonResult);	
+							console.log("abcd",jsonResult);
 					res.send(jsonResult);
 				}
 					});
 				
 				});
-
-
 }
 
