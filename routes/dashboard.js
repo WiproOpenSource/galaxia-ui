@@ -154,7 +154,6 @@ app.get('/dashboard/chartdata/:dashboardname/:widget', function(req, res, next){
 		
 	
 app.get('/dashboard/metrics/:dashboardname', function(req, res, next) {
-		//var metric = app.get('metric');
 		var condition = {};
 		condition.where = {templatename:req.params.dashboardname};
 		var fields = {};
@@ -171,6 +170,4 @@ app.get('/dashboard/metrics/:dashboardname', function(req, res, next) {
 	})
 
 }
-	//Following to be deleted
-	/*app.post('/savedashboard/:entityname/:tags', function(req, res, next) {
-    });*/	
+	

@@ -44,10 +44,7 @@ appmodule.config([ '$routeProvider', '$locationProvider', '$mdThemingProvider',
 					    }).when('/dash', {
 					        templateUrl: 'partials/dashboard.html',
 							controller: 'myController'
-					    }).when('/trial',{
-							templateUrl:'partials/trial.html',
-							controller:'myController'
-						}).when('/demo',{
+					    }).when('/demo',{
 							templateUrl:'partials/demo.html',
 							controller:'myController'
 						}).when('/chart',{

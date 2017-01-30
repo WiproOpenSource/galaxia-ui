@@ -43,13 +43,9 @@ app.use(express.Router());
 require('./routes/index')(app);
 require('./routes/nodes')(app);
 require('./routes/dashboard')(app);
-require('./routes/trial')(app);
-require('./routes/select')(app);
-require('./routes/alert')(app);
 require('./routes/dashboardbuilder')(app);
-require('./routes/entity')(app);
-require('./routes/chart')(app);
-//require('./routes/appbundle')(app);
+
+
 
 
 log4js.configure('./config/log4js.json',{});
