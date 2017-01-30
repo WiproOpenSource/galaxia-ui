@@ -1,4 +1,7 @@
 Galaxia-ui is the user interface for Galaxia tool which is used to monitor applications/containers/servers.
+
+Contributing to Galaxia-UI
+
 1.Fork the repository.
 
 Go to 'galaxia-ui' project on github website and click on the 'Fork' button to create your fork.
