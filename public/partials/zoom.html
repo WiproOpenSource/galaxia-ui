@@ -18,21 +18,21 @@
 		<p ng-show="containerinfocus" >Container&nbsp;&nbsp;&nbsp;{{containerinfocus.Name}}</p>
 		
 	</div--> 
-  <div style="width:1000px;position:relative;">
-
+  <div layout-padding layout="row">
+	<!--<div style="width:1000px;position:relative;">-->
 
 <!--
 ng-mouseleave="focusVM(false)" 
 -->
     
     <md-card ng-repeat="vm in vms|filter: searchfilters.vmquery"  ng-class="{'vm-focused': vm==vminfocus, 'style_prevu_kit': true}"
-		align="left" class="style_prevu_kit" style="background-color:{{vm_colors[$index%vm_colors.length]}}">
+		align="left" class="style_prevu_kit" style="background-color:{{vm_colors[$index%vm_colors.length]}}" ng-show="isCardInPage($index)">
 		<md-card-content>
 		<p style="text-align:right;">
 		<md-button ng-click="focusVM(false)" ng-if="vm==vminfocus"><i class="material-icons">close</i></md-button>
 		</p>
 		
-		<p ng-if="vm != vminfocus" style="padding-left:0;text-align:center">{{vm.ip}}</p>
+		<p ng-if="vm != vminfocus" style="padding-left:0;text-align:center">{{vm.ip}}{{$index}}</p>
 
 		
 		<p style="clear:both;overflow: hidden;">
@@ -54,14 +54,15 @@ ng-mouseleave="focusVM(false)"
 		
 	
 	 <md-card style="background-color:#FFF;" ng-repeat="container in containerdata|filter:searchfilters.containerquery" ng-show="vminfocus==vm" align="center" class="style_prevu_kit_child"
-        ng-mouseenter="focusContainer(container)" ng-mouseleave="focusContainer(false)" >
+        ng-mouseenter="focusContainer(container)" ng-mouseleave="focusContainer(false)">
           <md-card-content layout="row" layout-padding layout-wrap layout-fill layout-align="center">
 		  
 		  <img src="../images/Docker.png" width="40" height="50">
 		  <div style="width:270px;" layout="row" layout-align="center">
 		  <span style="padding:0 5px;"><i class="material-icons" ng-click="openApp()">touch_app</i></span> 
 		  <!--span style="padding-right:10px;padding-top:10px;" ng-click = compare("docker")><i class="material-icons">compare_arrows</i></span-->
-		  <span style="padding:0 5px;" ng-click="openChartModal(container)" ><i class="material-icons">insert_chart</i></span>
+		  <!--<span style="padding:0 5px;" ng-click="openChartModal(container)" ><i class="material-icons">insert_chart</i></span>-->
+		  <span style="padding:0 5px;" ng-click="OpenContainerChart(containerinfocus.Host,containerinfocus.Name)"><i class="material-icons">insert_chart</i></span>
 		  <span style="padding:0 5px;">
 			<md-checkbox ng-model="container.compareselected" ng-true-value="true" ng-false-value="false"
 				ng-change="selectedContainerforCompare(containerdata)"></md-checkbox>
@@ -75,7 +76,8 @@ ng-mouseleave="focusVM(false)"
 		 <md-card-actions style="position:absolute" layout="row" layout-align="center">
           <md-button ng-click="focusVM(vm)" ng-if="vm != vminfocus"><i class="material-icons">view_module</i></md-button>
 		  <md-button ng-if="vm == vminfocus" ng-click = compare("vm")><i class="material-icons">compare_arrows</i></md-button>
-          <md-button><i class="material-icons" ng-click="openChartModal(ev,vm)">insert_chart</i></md-button>
+          <!--<md-button><i class="material-icons" ng-click="openChartModal(ev,vm)">insert_chart</i></md-button>-->
+		  <md-button><i class="material-icons" ng-click="OpenVMChart()">insert_chart</i></md-button>
 		  <span ng-if="vm != vminfocus" style="padding-top: 5px;min-width: 88px;display: inline-block;text-align: center;">
 			<md-checkbox ng-model="vm.compareselected" ng-true-value="true" ng-false-value="false"
 				ng-change="selectedVMforCompare()"></md-checkbox>
@@ -88,6 +90,11 @@ ng-mouseleave="focusVM(false)"
 
 			
 	   </div>
+	     <div class="page-buttons">
+			<!--md-button ng-repeat="p in cardsPageList" ng-click="goToPage(p)">{{p}}</md-button-->
+			<md-button ng-click="goToPreviousPage()">Previous</md-button>
+			<md-button ng-click="goToNextPage()">Next</md-button>
+		</div>
    <div style="display:inline-block;float:right">
 	<md-card style="width:220px;height:220px">
 		<md-card-tilte>Create Dashboard</md-card-title>

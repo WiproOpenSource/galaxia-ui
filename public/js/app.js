@@ -169,6 +169,7 @@ appmodule.factory('dashboardservices', [function() {
 		var attachlabel;
 		var selectedinstances=[];
 		var labelkeys; //Bala - 01Dec
+		var port;
 		var dashboardData = {},
 			defaultDashboardData = {
 				"templatename": "",
@@ -311,6 +312,12 @@ appmodule.factory('dashboardservices', [function() {
 				},
 				retrieve_attachlabel:function(){
 					return attachlabel;
+				},
+				add_port:function(x){
+					port = x;
+				},
+				retrieve_port:function(){
+					return port;
 				}
 		}
 }])
