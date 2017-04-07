@@ -20,7 +20,6 @@ module.exports = function(app) {
 		var result = req.query.result;
 		var request = require('request');
 		var config = require('config');
-		//console.log("value",unit_type,sub_type);
 		if(result == null){
 			var options = {
 			url: "http://"+config.server.dashboard_server_ip+":"+config.server.dashboard_server_port+'/v1/catalogue?unit_type='+unit_type+'&sub_type='+sub_type,
@@ -42,7 +41,6 @@ module.exports = function(app) {
 			console.log("Got error: " + e.message);
 			next(e);
 		});
-    //res.send('{"result_list": [{"application": "ecommerce", "returnfields": [{"instance": "10.200.208.200", "job": "BAS-OpenSource123", "container": "pensive_goldstine", "application": "ecommerce"}, {"instance": "10.200.208.200", "job": "BAS-OpenSource123", "container": "furious_lamarr", "application": "ecommerce"}]}], "nextfields": ["service", "app_framework", "container"]}');
 	});
 
 	app.get('/getrecmetrics/:app',function(req,res,next){
@@ -55,16 +53,13 @@ module.exports = function(app) {
 	condition.where = {"name":app_type};
 	fields ={'_id':0};
 	console.log(app_type);
-	//console.log("condition"+JSON.stringify(condition));
 		recometric.find(condition.where,fields,function(err,result){
 					if(err)
 						console.log("Error is : " +  err);
 					else{
 
-							var jsonResult = JSON.parse(JSON.stringify(result))
-							//console.log("abcd",jsonResult);
-							//console.log("abcd",jsonResult);
-					res.send(jsonResult);
+						var jsonResult = JSON.parse(JSON.stringify(result))
+						res.send(jsonResult);
 				}
 					});
 
