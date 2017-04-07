@@ -43,7 +43,6 @@ app.use(express.Router());
 require('./routes/index')(app);
 require('./routes/monitor')(app);
 require('./routes/dashboard')(app);
-//require('./routes/dashboardbuilder')(app);
 log4js.configure('./config/log4js.json',{});
 app.set('logger',log4js);
 var logger = log4js.getLogger("app.js");
