@@ -13,12 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 */
-
 {
 	"server":{
 	  "node_server_port":3300,
 	  "dashboard_server_ip":"10.200.208.200",
-	  "dashboard_server_port":7000
+	  "dashboard_server_port":7000,
+		"database":"mongodb://10.200.208.176:27017/newgalaxiadb"
 	}
-
 }
