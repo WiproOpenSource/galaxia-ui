@@ -1,0 +1,37 @@
+ <div ng-cloak>
+				<div>
+				<div class="row">
+					<div class="col-xs-3">
+						<h2 class="page-header" style="color:#337ab7">List of {{option}}</h2>
+					</div>
+					 
+				</div>
+				<div id="search" class="input-group custom-search-form pull-right" style="width:30%">
+                                <input type="text" class="form-control" ng-model="search" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                </div>
+				</div>
+				<div class="row" style="margin-top:5%">
+					<div class="col-sm-6 col-md-4" ng-repeat='i in display|filter:search'>
+						<div class="thumbnail" style="background-color:#F0F0F0">
+							<img src="../images/{{option}}.jpg" alt="entity">
+							<div class="caption">
+								<h3 class="val" style="color:#337ab7">{{i}}</h3>
+								<div>
+								<div ng-repeat="field in nextfield" style="display:inline-block;float:left;padding-left:2%;cursor:pointer">
+									<span data-toggle="tooltip" title="{{field}}" ng-click="value='prev';getNextField(i,field,value);">
+										<img src="../images/{{field}}.jpg" width="30" height="30" alt="fields">
+									</span>
+								</div>
+								<div data-toggle="tooltip" title="View Graph"  ng-click="OpenViewChart(i)" style="inline-block;float:left;margin-left:70%;color:#337ab7;cursor:pointer">
+									<i style="width:10px;height:30px" class="fa fa-line-chart fa-fw"></i>
+								</div>
+							</div>
+						</div>
+				</div>
+				</div>
+				</div>

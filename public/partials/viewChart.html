@@ -1,0 +1,23 @@
+
+
+<div class="row">
+<div class="col-lg-12">
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<p style="color:#337ab7">Graph for {{option}} : {{value}}</p>
+	</div>
+	<div id="#div1" class="panel-body" style="min-height:40px;max-height:450px;overflow-y:scroll;">
+	<!--<p ng-if="recmetricsViewChart[0].widgets == null" style="color:#337ab7"> No graph for {{option}}</p>-->
+
+				<p ng-if="recmetricsViewChart[0].widgets == null" style="color:#337ab7"> No graph for {{option}} : {{value}}</p>
+			<div class="row" >
+				<div class="col-md-4" ng-repeat="i in recmetricsViewChart[0].widgets track by $index" style="padding-right:1%;padding-top:1%">
+					<canvas id="{{i}}" width="290" height="200" style="background-color:#E0E0E0"></canvas>
+				</div>
+			</div>
+			</hr>
+	</div>
+</div>
+</div>
+<div> <button ng-click="plotChart(recmetricsViewChart)">Plot Chart</button> </div>
+</div>
