@@ -126,7 +126,7 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 				for(i=0;i<entities.length;i++){
 					$http.get('/getrecmetrics/'+entities[i]).success(function(data){
 						if( data.length == 0){
-									$http.get('/getrecmetrics/'+$scop.nextval).success(function(data){
+									$http.get('/getrecmetrics/'+$scope.nextval).success(function(data){
 										var metric_names = [];
 										for(j=0;j<data[0].metrics.length;j++){
 											if(data[0].metrics[j].label.hasOwnProperty('instance'))
