@@ -17,6 +17,6 @@
 module.exports = function(app) {
 	
 	app.get("/", function (req, res, next) {
-			res.sendfile('views/indexNew.html')
+			res.sendfile('views/index.html')
 	});
 };
