@@ -23,44 +23,30 @@ var express = require('express')
    , log4js = require('log4js')
    , methodOverride = require('method-override')
    , config = require('config')
-   , session = require('express-session');
+   , session = require('express-session')
+   , mongoose = require('mongoose');
+
+mongoose.connect(config.server.database);
 
 var app = express();
 
-app.set('port', process.env.PORT || config.node_server_port);
+app.set('port', process.env.PORT || config.server.node_server_port);
 app.set('views', __dirname + '/views');
 
-app.use(bodyParser.json()); 
-app.use(bodyParser.urlencoded({extended: true})); 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(express.Router());
 
 require('./routes/index')(app);
-require('./routes/nodes')(app);
+require('./routes/monitor')(app);
 require('./routes/dashboard')(app);
-require('./routes/trial')(app);
-require('./routes/select')(app);
-require('./routes/dashboardbuilder')(app);
-require('./routes/entity')(app);
-require('./routes/chart')(app);
-
-
-
 log4js.configure('./config/log4js.json',{});
 app.set('logger',log4js);
 var logger = log4js.getLogger("app.js");
 
-require("myframework").configure(app, function(err,data){
-  if(err)
-    console.log('Error Found');
-  else
-    {
-      console.log(" Callback function is being called ");
-      http.createServer(app).listen(app.get('port'), function(){
-        console.log('Express server listening on port ' + app.get('port'));
-      });
-   }
-})
-   
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});

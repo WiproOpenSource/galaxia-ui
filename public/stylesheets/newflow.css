@@ -1,0 +1,72 @@
+.navbar-default {
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+}
+
+@media (min-width: 768px)
+.navbar-static-top {
+    border-radius: 0;
+}
+
+.navbar-static-top {
+    z-index: 1000;
+    border-width: 0 0 1px;
+}
+
+@media (min-width: 768px)
+.navbar {
+    border-radius: 4px;
+}
+
+.navbar {
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+}
+
+nav{
+    display:block;
+}
+
+*.{
+    box-sizing:border-box;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+div{
+    display:block;
+}
+
+#wrapper {
+  width: 100%;
+}
+
+@media (min-width: 768px)
+#page-wrapper {
+    position: inherit;
+    margin: 0 0 0 250px;
+    padding: 0 30px;
+    border-left: 1px solid #e7e7e7;
+}
+
+.thumbnail{        
+    width: 100%; 
+    // or you could use percentage values for responsive layout
+    // width : 100%;
+    height: 20%;
+    overflow: auto;
+}
+
+.thumbnail img{
+    // your styles for the image
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+li{cursor:pointer;}
