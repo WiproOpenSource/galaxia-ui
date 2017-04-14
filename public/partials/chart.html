@@ -1,4 +1,4 @@
-<div style="width:100%" ng-init="OpenChart(type,nextval)">
+<div style="width:100%" ng-init="OpenChart(nextval,clickedval)">
 <div class="row" style="margin-top:2%;">
 <div class="col-lg-6">
 	<div  class="panel panel-default">
@@ -9,7 +9,7 @@
 						<div class="row" >
 							<div class="col-xs-12">
 								<span ng-if="display2 != null" class="radio-inline" ng-repeat="i in display2 track by $index" style="color:#337ab7;">
-									<input type="radio" data-ng-value="i" data-ng-model="role" ng-click="OpenChart(i,type);stopInterval()" name="optradio">{{i}}
+									<input type="radio" data-ng-value="i" data-ng-model="role" ng-click="OpenChart(i,clickedval);stopInterval()" name="optradio">{{i}}
 								</span>
 								<p ng-if="display2 == null" style="color:#337ab7"> No instances for {{nextval}}</p>
 							</div>
@@ -43,11 +43,11 @@
 				<p style="color:#337ab7">Select metrics for {{nextval}}</p>
 			</div>
 			<div class="panel-body" style="min-height:40px;max-height:80px;overflow-y:scroll;">
-				<p ng-if="recmetrics[1].widgets == null" style="color:#337ab7"> No metrics for {{nextval}}</p>
+				<p ng-if="recmetricsright[0].widgets == null" style="color:#337ab7"> No metrics for {{nextval}}</p>
 				<div class="row" >
 							<div class="col-lg-3">
 								<form>
-								<span class="radio-inline"  ng-repeat="metricnext in recmetrics[1].widgets track by $index" style="color:#337ab7;">
+								<span class="radio-inline"  ng-repeat="metricnext in recmetricsright[0].widgets track by $index" style="color:#337ab7;">
 
 									<input id="metricnext" type="radio" ng-value="metricnext" ng-model="selectedMetric.metric" name="optradio">{{metricnext}}
 								</span>
@@ -65,12 +65,12 @@
 				<p style="color:#337ab7">Select metrics for {{type}}</p>
 			</div>
 			<div class="panel-body" style="min-height:40px;max-height:80px;overflow-y:scroll;">
-				<p ng-if="recmetrics[0].widgets == null" style="color:#337ab7"> No metrics for {{type}}</p>
+				<p ng-if="recmetricsleft[0].widgets == null" style="color:#337ab7"> No metrics for {{type}}</p>
 				<div class="row" >
 							<div class="col-lg-3">
 								<form>
 
-								<span class="radio-inline" ng-repeat="metricprev in recmetrics[0].widgets track by $index" style="color:#337ab7;">
+								<span class="radio-inline" ng-repeat="metricprev in recmetricsleft[0].widgets track by $index" style="color:#337ab7;">
 
 									<input id="metricprev" type="radio"  ng-value="metricprev" ng-model="selected1Metric.metric" name="optradio">{{metricprev}}
 								</span>
@@ -91,10 +91,10 @@
 
 	</div>
 	<div id="#div1" class="panel-body" style="min-height:40px;max-height:300px;overflow-y:scroll;">
-	<p ng-if="recmetrics[1].widgets == null" style="color:#337ab7"> No graph for {{nextval}}</p>
-		<div class="row" ng-show="(selectedMetric.metric==null || i==selectedMetric.metric)" ng-repeat="i in recmetrics[1].widgets track by $index">
+	<p ng-if="recmetricsright[0].widgets == null" style="color:#337ab7"> No graph for {{nextval}}</p>
+		<div class="row" ng-show="(selectedMetric.metric==null || i==selectedMetric.metric)" ng-repeat="i in recmetricsright[0].widgets track by $index">
 		<div class="col-1">
-				<p ng-if="recmetrics[1].widgets == null" style="color:#337ab7"> No graph for {{nextval}}</p>
+				<p ng-if="recmetricsright[0].widgets == null" style="color:#337ab7"> No graph for {{nextval}}</p>
 				<div style="background-color:#E0E0E0">
 					<canvas id="{{i}}" width="290" height="200"></canvas><hr>
 				</div>
@@ -110,8 +110,8 @@
 		<p style="color:#337ab7">Graph for {{type}} : {{clickedval}}</p>
 	</div>
 	<div id="#div2" class="panel-body" style="min-height:40px;max-height:300px;overflow-y:scroll;">
-		<p ng-if="recmetrics[0].widgets == null" style="color:#337ab7"> No graph for {{type}}</p>
-		<div class="row"  ng-show="(selected1Metric.metric==null || i==selected1Metric.metric)" ng-repeat="i in recmetrics[0].widgets track by $index" >
+		<p ng-if="recmetricsleft[0].widgets == null" style="color:#337ab7"> No graph for {{type}}</p>
+		<div class="row"  ng-show="(selected1Metric.metric==null || i==selected1Metric.metric)" ng-repeat="i in recmetricsleft[0].widgets track by $index">
 		<div class="col-1">
 				<div style="background-color:#E0E0E0">
 					<canvas id="{{i}}" width="290" height="200"></canvas><hr>
@@ -123,5 +123,5 @@
 </div>
 </div>
 </div>
-	<div> <button ng-click="plotChart(recmetrics)">Plot Chart</button> </div>
+	<div> <button ng-click="plotChart(mergemetric)">Plot Chart</button> </div>
 </div>
