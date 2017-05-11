@@ -7,6 +7,7 @@ Galaxia-UI is the user interface for Galaxia tool which is used to monitor appli
 1. Fork the repository.
    Go to 'galaxia-ui' project on github website and click on the 'Fork' button to create your fork.
 
+
 2. Clone the repository locally.
    Copy your fork repository URL and run the following command from git bash.
    ```sh
@@ -28,4 +29,3 @@ Galaxia-UI is the user interface for Galaxia tool which is used to monitor appli
    ```
 
 6. Open pull requests from your fork to main repository from github website.
-
