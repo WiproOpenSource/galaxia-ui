@@ -47,7 +47,6 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 	$scope.clickedval;
 	$scope.oldval;
 
-
 	$scope.getNextField = function(service,field,val){
 			$scope.display2 = [];
 			$scope.nextfield2 = [];
@@ -74,7 +73,6 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 					$window.location.href = '#/entity';
 					$route.reload();
 				})
-
 		}
 
 		$scope.selectedMetric = {metric:null};
@@ -116,17 +114,18 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 					}
 				})
 			}
-
+		$scope.mergemetric=[];
 		$scope.OpenChart = function(x,y){
-			$scope.recmetrics=[];
+			console.log(x,y);
+			console.log($scope.nextval,$scope.type);
+			$scope.recmetricsleft=[];
+			$scope.recmetricsright=[];
 			var entities=[];
 			$scope.info = x;
 			dashboardservices.add_port($scope.clickedval);
-			entities.push(x,y);
-				for(i=0;i<entities.length;i++){
-					$http.get('/getrecmetrics/'+entities[i]).success(function(data){
+					$http.get('/getrecmetrics/'+x).success(function(data){
 						if( data.length == 0){
-									$http.get('/getrecmetrics/'+$scop.nextval).success(function(data){
+									$http.get('/getrecmetrics/'+$scope.nextval).success(function(data){
 										var metric_names = [];
 										for(j=0;j<data[0].metrics.length;j++){
 											if(data[0].metrics[j].label.hasOwnProperty('instance'))
@@ -134,7 +133,9 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 											metric_names.push(data[0].metrics[j].name);
 										}
 											data[0].widgets = metric_names;
-											$scope.recmetrics.push(data[0]);
+											$scope.recmetricsright.push(data[0]);
+											console.log("recmetricsright",$scope.recmetricsleft);
+											$scope.mergemetric = $scope.recmetricsright;
 									})
 						}else{
 								var metric_names = [];
@@ -144,15 +145,47 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 										metric_names.push(data[0].metrics[j].name);
 								}
 								data[0].widgets = metric_names;
-								$scope.recmetrics.push(data[0]);
+								$scope.recmetricsright.push(data[0]);
+								console.log("recmetricsright",JSON.stringify($scope.recmetricsright));
+								$scope.mergemetric = $scope.recmetricsright;
 						}
-				})
+					});
 					
-			}
+					$http.get('/getrecmetrics/'+y).success(function(data){
+						if( data.length == 0){
+									$http.get('/getrecmetrics/'+$scope.type).success(function(data){
+										var metric_names = [];
+										for(j=0;j<data[0].metrics.length;j++){
+											if(data[0].metrics[j].label.hasOwnProperty('instance'))
+											data[0].metrics[j].label.instance = dashboardservices.retrieve_port();
+											metric_names.push(data[0].metrics[j].name);
+										}
+											data[0].widgets = metric_names;
+											$scope.recmetricsleft.push(data[0]);
+											console.log("recmetricsleft",$scope.recmetricsleft);
+											$scope.mergemetric = $scope.recmetricsright.concat($scope.recmetricsleft);
+									})
+						}else{
+								var metric_names = [];
+								for(j=0;j<data[0].metrics.length;j++){
+									if(data[0].metrics[j].label.hasOwnProperty('instance'))
+										data[0].metrics[j].label.instance = dashboardservices.retrieve_port();
+										metric_names.push(data[0].metrics[j].name);
+								}
+								data[0].widgets = metric_names;
+								$scope.recmetricsleft.push(data[0]);
+								console.log("recmetricsleft",JSON.stringify($scope.recmetricsleft));
+								$scope.mergemetric = $scope.recmetricsright.concat($scope.recmetricsleft);
+						}
+					});
+				console.log("mergemetric",$scope.mergemetric);
 		}
-
+				
+		
 		var myInterval = 0;
 		$scope.plotChart = function(metricdata){
+			console.log("Inside Plotchart");
+			console.log("METRICDATA",JSON.stringify(metricdata,metricdata.length));
 			$scope.stopInterval();
 			var chartJSON = {};
 			for(i=0;i<metricdata.length;i++){
@@ -219,8 +252,9 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 			// and plot the graph.
 
        myInterval = setInterval(function(){
-						var mdata = metricdata.concat(metricdata[1]);
+					
 					    $.each(metricdata, function(i, rec) {
+							console.log("rec",JSON.stringify(rec));
                 $http.post('/dashboard/chartdata',rec).success(function(result1){
 									for(h=0;h<result1.length;h++){
 										  var dtnow = new Date(result1[h].value.x*1000);
@@ -237,9 +271,7 @@ function maincontroller($scope,$http,$window,dashboardservices,$route){
 							})
             })
         	$scope.currPath = $window.location.hash;
-					if($scope.currPath != '#/entity'){
-					}
-				},1000) //end of myInterval
+				},5000) 
 
 	} 
 	
